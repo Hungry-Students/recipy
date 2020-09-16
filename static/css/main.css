@@ -1,0 +1,54 @@
+body {
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 15px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+header {
+    text-align: center;
+}
+
+header a {
+    color: black;
+    text-decoration: none;
+}
+
+ol li {
+    margin-bottom: 1ex;
+}
+
+table.ingredients {
+    border-collapse: collapse;
+}
+
+table.ingredients tr:nth-child(2) td {
+    padding-top: 1ex;
+}
+
+table.ingredients tr:first-child td {
+    padding-bottom: 1ex;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+}
+
+table.ingredients td {
+    padding-top: 0.5ex;
+    vertical-align: top;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+table.ingredients td:first-child {
+    text-align: right;
+    white-space: nowrap;
+    padding-left: 0;
+}
+
+table.ingredients td:nth-child(2) {
+    white-space: nowrap;
+}
