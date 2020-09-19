@@ -1,14 +1,20 @@
 body {
   font-family: "DejaVu Sans Mono", monospace;
-  font-size: 11pt;
-  width: 600px;
+  font-size: 10pt;
+  max-width: 600px;
   margin: 0 auto; }
-
+  @media (min-width: 420px) {
+    body {
+      font-size: 10.5pt; } }
+  @media (min-width: 600px) {
+    body {
+      font-size: 11pt; } }
 h1 {
   text-align: center; }
 
 header {
-  text-align: center; }
+  text-align: center;
+  font-size: calc(min(2.5vw, 15px)); }
   header a {
     color: black;
     text-decoration: none; }
@@ -31,8 +37,12 @@ table.ingredients {
     padding-right: 0.5em; }
     table.ingredients td:first-child, table.ingredients th:first-child {
       text-align: right;
-      white-space: nowrap;
       padding-left: 0; }
+      @media (min-width: 420px) {
+        table.ingredients td:first-child, table.ingredients th:first-child {
+          white-space: nowrap; } }
     table.ingredients td:nth-child(2), table.ingredients th:nth-child(2) {
-      text-align: left;
-      white-space: nowrap; }
+      text-align: left; }
+      @media (min-width: 420px) {
+        table.ingredients td:nth-child(2), table.ingredients th:nth-child(2) {
+          white-space: nowrap; } }
