@@ -2,7 +2,8 @@ body {
   font-family: "DejaVu Sans Mono", monospace;
   font-size: 10pt;
   max-width: 600px;
-  margin: 0 auto; }
+  margin: 0 auto;
+  padding: 0 1em; }
   @media (min-width: 420px) {
     body {
       font-size: 10.5pt; } }
