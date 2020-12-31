@@ -13,6 +13,9 @@ body {
 h1 {
   text-align: center; }
 
+h2 {
+  text-indent: 1.5em; }
+
 header {
   text-align: center;
   font-size: calc(min(2.5vw, 15px)); }
