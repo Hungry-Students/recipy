@@ -10,7 +10,8 @@ help: ## Show this help
 
 .PHONY: venv
 venv: ## Make a new virtual environment
-	$(PYTHON) -m venv $(VENV) && source $(BIN)/activate
+	$(PYTHON) -m venv $(VENV)
+	source $(BIN)/activate
 
 .PHONY: install
 install: venv ## Make virtual environment and install requirements
