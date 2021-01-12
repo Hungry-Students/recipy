@@ -26,7 +26,7 @@ class RestrictedDiet(models.Model):
 
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
-    ingredients = models.ManyToManyField(Ingredient, through="IngredientQuantity")
+    ingredients = models.ManyToManyField(Ingredient, through='IngredientQuantity')
 
     # Properties from https://schema.org/Recipe
     cook_time = models.DurationField()
@@ -39,13 +39,13 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
- 
+
 class IngredientQuantity(models.Model):
 	quantity = models.IntegerField()
 	quantity_unit = models.CharField(max_length=200)
-	
+
 	recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
 	ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
-	
+
 	def __str__(self):
-		return str(self.recipe)+"/"+str(self.ingredient)
+		return str(self.recipe)+'/'+str(self.ingredient)
