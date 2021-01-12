@@ -88,6 +88,12 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'users.User'
 
+# Login/out redirect
+
+LOGIN_REDIRECT_URL = 'dashboard'
+
+LOGOUT_REDIRECT_URL = 'dashboard'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -106,6 +112,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Email settings
+# /!\ Will need to be updated! /!\
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
