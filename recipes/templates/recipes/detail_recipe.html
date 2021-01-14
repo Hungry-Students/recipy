@@ -6,6 +6,16 @@
   </head>
   <body>
     <h1> Recipe : {{recipe.name}}</h1>
+    
+    <h2> Quantité et temps de préparation </h2>
+    
+    <p>
+    	Quantité : {{recipe.quantity}} {{recipe.quantity_unit}}. <br><br>
+    	
+    	Temps de préparation : non implémenté.<br>
+    	Temps de cuisson : {{recipe.cook_time}}. <br>
+    </p>
+    
     <h2> Ingredients </h2>
     <p>
     	{% if ingredient_quantities %}
@@ -17,6 +27,12 @@
 		{% else %}
 			<p>No recipes are available.</p>
 		{% endif %}
+    </p>
+    
+    <h2> Instructions de préparation </h2>
+    
+    <p>
+    	{{recipe.instruction}}
     </p>
   </body>
 </html>
