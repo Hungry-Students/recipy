@@ -31,11 +31,11 @@ class Recipe(models.Model):
     # Properties from https://schema.org/Recipe
     cook_time = models.DurationField()
     cooking_method = models.CharField(max_length=200)
-    #category = models.ForeignKey(RecipeCategory, on_delete=models.PROTECT, blank=True, null=True)
+    category = models.ForeignKey(RecipeCategory, on_delete=models.PROTECT, blank=True, null=True)
     instruction = models.CharField(max_length=10000)
     quantity = models.IntegerField()
     quantity_unit = models.CharField(max_length=200)
-    #diet = models.ForeignKey(RestrictedDiet, on_delete=models.PROTECT, blank=True, null=True)
+    diet = models.ForeignKey(RestrictedDiet, on_delete=models.PROTECT, blank=True, null=True)
 
     def __str__(self):
         return self.name

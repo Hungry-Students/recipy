@@ -4,7 +4,7 @@ from django.shortcuts import render
 # Create your views here.
 
 from django.http import HttpResponse
-from .models import Ingredient, RecipeCategory, RestrictedDiet, Recipe
+from .models import Ingredient, RecipeCategory, RestrictedDiet, Recipe, IngredientQuantity
 
 
 def index(request):
@@ -16,7 +16,9 @@ def index(request):
 
 def detail_recipe(request, recipe_id):
 	recipe = Recipe.objects.filter(id=recipe_id)[0]
+	ingredient_quantity_list = IngredientQuantity.objects.filter(recipe = recipe_id)
 	context = {
 		'recipe':recipe,
+		'ingredient_quantities':ingredient_quantity_list,
 	}
 	return render(request, 'recipes/detail_recipe.html', context)
