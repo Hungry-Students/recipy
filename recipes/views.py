@@ -22,3 +22,7 @@ def detail_recipe(request, recipe_id):
 		'ingredient_quantities':ingredient_quantity_list,
 	}
 	return render(request, 'recipes/detail_recipe.html', context)
+
+def write(request):
+    # View that allows user to write their own recipes
+    return render(request , 'add/write.html')

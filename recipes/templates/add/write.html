@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Write your own recipe</title>
+    </head>
+
+    <body>
+        <h2>Write your own recipe</h2>
+        <form method="post" action="/getdata/">
+            <table>
+                <tr>
+                    <td>Recipe title</td>
+                    <td>
+                        <input type="text" id="title" name="title" placeholder="Tartiflette">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Yields</td>
+                    <td>
+                        <input type="number" id="quantity" name="quantity" placeholder="42" min="0">
+                        <select name="quantity_unit" id="quantity_unit">
+                            <option value="people">people</option>
+                            <option value="servings">servings</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Submit my recipe">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
