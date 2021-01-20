@@ -24,33 +24,25 @@ def detail_recipe(request, recipe_id):
 	}
 	return render(request, 'recipes/detail_recipe.html', context)
 
-def write(request):
+def write(request, error_message=None, existing_recipe=None):
     # View that allows user to write their own recipes
     ingredient_list = Ingredient.objects.order_by('name')
     context = {
     	'range':range(1,6),
     	'ingredient_list' : ingredient_list,
-    	'error_message' : None,
-    	'existing_recipe' : None,
+    	'error_message' : error_message,
+    	'existing_recipe' : existing_recipe,
     }
     return render(request , 'recipes/write.html', context)
     
 def handle_form(request):
 
-	#checking for duplicatas of recipies
+	#checking for duplicates of recipies
 	temp = Recipe.objects.filter(name = request.POST['title'])
 	if temp:
-		#re-render form with an error message. TODO : factor this (tutorial 4 at the end)
-		ingredient_list = Ingredient.objects.order_by('name')
-		context = {
-			'range':range(1,6),
-			'ingredient_list' : ingredient_list,
-			'error_message' : 'this recipe already exists',
-			'existing_recipe' : temp[0],
-		}
-		return render(request , 'recipes/write.html', context)
+		return write(request, error_message = 'this recipe already exists', existing_recipe = temp[0])
 	
-	#extracting ingredients and checking for ingredient duplicatas
+	#extracting ingredients and checking for ingredient duplicates
 	ingredient_quantities = {}
 	ingredient_quantity_units = {}
 	for i in range(1,6):
@@ -58,15 +50,7 @@ def handle_form(request):
 		if ingredient_name == '':
 			continue
 		if ingredient_name in ingredient_quantities:
-			#re-render form with an error message. TODO : factor this (tutorial 4 at the end)
-			ingredient_list = Ingredient.objects.order_by('name')
-			context = {
-				'range':range(1,6),
-				'ingredient_list' : ingredient_list,
-				'error_message' : 'You have listed ingredient '+ingredient_name+' several times',
-				'existing_recipe' : None,
-			}
-			return render(request , 'recipes/write.html', context)
+			return write(request, error_message = 'You have listed ingredient '+ingredient_name+' several times')
 		ingredient_quantities[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity']
 		ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit']
 		
