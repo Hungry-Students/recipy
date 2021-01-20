@@ -25,13 +25,43 @@
                         </select>
                     </td>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <input type="submit" value="Submit my recipe">
-                    </td>
-                </tr>
-            </table>
+				{%  for ingredient_number in range %}
+				<tr>
+					<td>Ingredient {{ ingredient_number }}</td>
+					<td>
+						<select id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}" placeholder="Patate">
+							<option value=""> None </option>
+							{% for ingredient in ingredient_list %}
+								<option value="{{ ingredient }}"> {{ ingredient }} </option>
+							{% endfor %}
+						</select>
+					</td>
+				</tr>
+		
+				<tr>
+					<td>Quantity</td>
+					<td>
+						<input type="number" id="ingredient{{ ingredient_number }}_quantity" name="ingredient{{ ingredient_number }}_quantity" placeholder="42">
+						<select name="ingredient{{ ingredient_number }}_quantity_unit" id="ingredient{{ ingredient_number }}_quantity_unit">
+							<option value="units">units</option>
+							<option value="grams">grams</option>
+						</select>
+					</td>
+				</tr>
+				{% endfor %}
+				<tr>
+					<td> Instructions </td>
+					<td>
+						<textarea name="instructions" id="instructions" rows="10" cols="40" placeholder="Type here the instructions to cook your recipe."></textarea>
+					</td>
+				</tr>
+				<tr>
+		                <td></td>
+		                <td>
+		                    <input type="submit" value="Submit my recipe">
+		                </td>
+		            </tr>
+		        </table>
         </form>
     </body>
 </html>

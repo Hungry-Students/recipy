@@ -25,4 +25,9 @@ def detail_recipe(request, recipe_id):
 
 def write(request):
     # View that allows user to write their own recipes
-    return render(request , 'add/write.html')
+    ingredient_list = Ingredient.objects.order_by('name')
+    context = {
+    	'range':range(1,6),
+    	'ingredient_list' : ingredient_list,
+    }
+    return render(request , 'add/write.html', context)
