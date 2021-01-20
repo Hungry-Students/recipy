@@ -40,7 +40,7 @@
 				<tr>
 					<td>Ingredient {{ ingredient_number }}</td>
 					<td>
-						<select id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}" placeholder="Patate">
+						<select id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}">
 							<option value=""> None </option>
 							{% for ingredient in ingredient_list %}
 								<option value="{{ ingredient }}"> {{ ingredient }} </option>
