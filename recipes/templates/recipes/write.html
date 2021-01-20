@@ -36,16 +36,17 @@
                         </select>
                     </td>
                 </tr>
+                <datalist id= "ingredients_list">
+		            <option value=""> None </option>
+					{% for ingredient in ingredient_list %}
+						<option value="{{ ingredient }}"> {{ ingredient }} </option>
+					{% endfor %}
+				</datalist>
 				{%  for ingredient_number in range %}
 				<tr>
 					<td>Ingredient {{ ingredient_number }}</td>
 					<td>
-						<select id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}">
-							<option value=""> None </option>
-							{% for ingredient in ingredient_list %}
-								<option value="{{ ingredient }}"> {{ ingredient }} </option>
-							{% endfor %}
-						</select>
+						<input list="ingredients_list" id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}">
 					</td>
 				</tr>
 		
