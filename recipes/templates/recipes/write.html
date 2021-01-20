@@ -7,7 +7,18 @@
 
     <body>
         <h2>Write your own recipe</h2>
-        <form method="post" action="/getdata/">
+        {% if error_message %}
+    		<div>
+    		Error : {{error_message}} <br>
+    		
+    		{% if existing_recipe %}
+    			<a href="/recipes/{{ existing_recipe.id }}/">Link towards the recipe</a><br>
+    		{% endif %}
+    		
+    		</div>
+    	{% endif %}
+        <form method="post" action="{% url 'recipes:handle_form' %}">
+        {% csrf_token %}
             <table>
                 <tr>
                     <td>Recipe title</td>
