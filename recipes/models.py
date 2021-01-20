@@ -27,6 +27,9 @@ class RestrictedDiet(models.Model):
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
     ingredients = models.ManyToManyField(Ingredient, through='IngredientQuantity')
+    
+    #URL used to manage duplicatas
+    url = models.CharField(max_length=400, blank=True, null=True)
 
     # Properties from https://schema.org/Recipe
     cook_time = models.DurationField(blank=True, null=True)
