@@ -70,12 +70,8 @@ def handle_form(request):
 	
 	#building Many-to-Many relatioships for ingredients	
 	for ingredient_name in ingredient_quantities.keys():
-		ingredient_object = Ingredient.objects.filter(name = ingredient_name)[0]
-		relation = IngredientQuantity(recipe = new_recipe, ingredient = ingredient_object,
-									  quantity = ingredient_quantities[ingredient_name],
-									  quantity_unit = ingredient_quantity_units[ingredient_name]
-									 )
-		relation.save()
+		add_ingredient(new_recipe, ingredient_name, ingredient_quantities[ingredient_name], ingredient_quantity_units[ingredient_name])
+		
 	return HttpResponseRedirect(reverse('recipes:index'))
 	
 	
@@ -97,4 +93,23 @@ def scrape(request):
 			new_recipe.save()
 		return HttpResponseRedirect(reverse('recipes:index'))
 	except:
-		return write(request, error_message_link='the website '+ request.POST['url'] + ' is not supported by recipe_scraper')
+		return write(request, error_message_link='the url '+ request.POST['url'] + ' is not supported by recipe_scraper')
+		
+### NON-VIEWS FUNCTION ###
+
+def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quantity_unit):
+	#Fetching or creating ingredient
+	possible_ing_obj = Ingredient.objects.filter(name = ingredient_name)
+	if possible_ing_obj :
+		ingredient_object = possible_ing_obj[0]
+	else :
+		ingredient_object = Ingredient(name = ingredient_name)
+		ingredient_object.save()
+	
+	#Building relation to recipe	
+	relation = IngredientQuantity(recipe = recipe, 
+								  ingredient = ingredient_object,
+								  quantity = ingredient_quantity,
+								  quantity_unit = ingredient_quantity_unit
+								  )
+	relation.save()
