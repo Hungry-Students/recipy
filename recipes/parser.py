@@ -8,7 +8,12 @@ class IngredientParser():
 		return { 
 			"grammes"				: ["grammes", "gr", "g"],
 			"kg"					: ["kg"],
-			"cuillère à soupe"		: ["cuillère à soupe", "cuillères à soupe", "càs", "c. à. s."],
+			"cuillères à soupe"		: ["cuillère à soupe", "cuillères à soupe", "càs", "c. à. s."],
+			"verres"				: ["verre", "verres"],
+			"cL"					: ["cl", "centilitres"],
+			"mL"					: ["ml", "millilitres"],
+			"L"						: ["l", "litres"],
+			"pincées"				: ["pincées", "pincée"],
 		}
 	
 	def separators(self):
@@ -26,8 +31,8 @@ class IngredientParser():
 		regexp_unit = "(?P<quantity_unit>"
 		regexp += "((?P<quantity_unit>"
 		temp = False
-		for token in self.quantity_units():
-			for q_unit in token:
+		for name,token_list in self.quantity_units().items():
+			for q_unit in token_list:
 				if temp:
 					regexp += "|"
 					regexp_unit += "|"
@@ -52,7 +57,7 @@ class IngredientParser():
 		regexp+=spaces
 
 		# Ingredient name
-		regexp += "(?P<ingredient_name>[\w'\- ]+\w)"
+		regexp += "(?P<ingredient_name>[\w'.\- ]+\w)"
 		regexp+=spaces
 		
 		return regexp, regexp_unit
@@ -102,7 +107,7 @@ class YieldsParser():
 		regexp = "(?P<yields>[0-9]+)"
 		regexp += spaces
 		
-		regexp+="(?P<yields_unit>[\w'\- ]+\w)"
+		regexp+="(?P<yields_unit>[\w'.\- ]+\w)"
 		regexp+=spaces
 		
 		return regexp
@@ -130,16 +135,21 @@ class YieldsParser():
 def test_parsers():
 	print("Test of IngredientParser :\n")
 	p = IngredientParser()
-	p.parse("Poivre")
-	print(p.quantity)
-	print(p.quantity_unit)
-	print(p.ingredient_name, '\n')
+	print(p.regexp)
+	l=["Poivre", "300 càs de farine"]
+	for e in l:
+		p.parse(e)
+		print(p.quantity)
+		print(p.quantity_unit)
+		print(p.ingredient_name, '\n')
 
-	print(p.parse_unit("g"),'\n')
+	#print(p.parse_unit("g"),'\n')
 	
-	print("Test of YieldsParser :\n")
-	p = YieldsParser()
-	p.parse("8 personnes")
-	print(p.yields)
-	print(p.yields_unit)
+	#print("Test of YieldsParser :\n")
+	#p = YieldsParser()
+	#p.parse("8 personnes")
+	#print(p.yields)
+	#print(p.yields_unit)
+#test_parsers()	
+
 

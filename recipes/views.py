@@ -56,10 +56,12 @@ def handle_form(request):
         ingredient_name = request.POST['ingredient'+str(i)]
         if ingredient_name == '':
             continue
+        ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
         if ingredient_name in ingredient_quantities:
             return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
         ingredient_quantities[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity']
-        ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit']
+        ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit'].lower() 
+        #note : we enforce lower case here for ingredient quantity unit. If upper case is needed in representation (e.g. cL), it will be transformed later on
 
     #building new recipe
     new_recipe = Recipe(name = request.POST['title'],
@@ -89,13 +91,13 @@ def scrape(request):
 			new_recipe = Recipe(name = scraper.title(),
 								instruction = scraper.instructions(),
 								quantity = yields_parser.yields,
-								quantity_unit = yields_parser.yields_unit,
+								quantity_unit = yields_parser.yields_unit.lower(),
 								url = request.POST['url']
 								)
 			new_recipe.save()
 			ingredient_parser = IngredientParser()
 			for e in scraper.ingredients():
-				ingredient_parser.parse(e)
+				ingredient_parser.parse(e.lower()) #note : we enforce lower case in the argument, and will give upper case (e.g. cL) in the parser when needed
 				add_ingredient(new_recipe, ingredient_parser.ingredient_name, ingredient_parser.quantity, ingredient_parser.quantity_unit)
 		else:
 			return write(request, error_message_link = 'this recipe already exists', existing_recipe = existing_recipes[0])
