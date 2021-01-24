@@ -44,8 +44,8 @@ class Recipe(models.Model):
         return self.name
 
 class IngredientQuantity(models.Model):
-	quantity = models.IntegerField()
-	quantity_unit = models.CharField(max_length=200)
+	quantity = models.IntegerField(blank=True, null=True)
+	quantity_unit = models.CharField(max_length=200, blank=True, null=True)
 
 	recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
 	ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)

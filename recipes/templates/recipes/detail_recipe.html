@@ -21,7 +21,16 @@
     	{% if ingredient_quantities %}
 			<ul>
 			{% for x in ingredient_quantities %}
-				<li>{{ x.ingredient }} ({{x.quantity}} {{x.quantity_unit}})</li>
+				<li>
+					{{ x.ingredient }}
+					{% if x.quantity %}	
+						( {{x.quantity}}
+						 {% if x.quantity_unit %}
+							 {{x.quantity_unit}}
+						 {% endif %}
+						)
+					{% endif %}
+				</li>
 			{% endfor %}
 			</ul>
 		{% else %}

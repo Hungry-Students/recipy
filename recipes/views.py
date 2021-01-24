@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect #, HttpResponse
 from django.urls import reverse
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity #, RecipeCategory, RestrictedDiet
+from .parser import IngredientParser, YieldsParser
 
 
 def index(request):
@@ -81,16 +82,19 @@ def scrape(request):
     try:
         if not Recipe.objects.filter(url = request.POST['url']):
             scraper = scrape_me(request.POST['url'])
-            print(scraper.ingredients())
-            print(scraper.instructions())
-            print(scraper.yields())
+            yields_parser = YieldsParser()
+            yields_parser.parse(scraper.yields())
             print(scraper.total_time())
             new_recipe = Recipe(name = scraper.title(),
                         instruction = scraper.instructions(),
-                        quantity = 3,
-                        quantity_unit = 'people',
+                        quantity = yields_parser.yields,
+                        quantity_unit = yields_parser.yields_unit,
                         )
             new_recipe.save()
+            ingredient_parser = IngredientParser()
+            for e in scraper.ingredients():
+            	ingredient_parser.parse(e)
+            	add_ingredient(new_recipe, ingredient_parser.ingredient_name, ingredient_parser.quantity, ingredient_parser.quantity_unit)
         return HttpResponseRedirect(reverse('recipes:index'))
     except WebsiteNotImplementedError:
         msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
@@ -106,7 +110,7 @@ def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quan
     else :
         ingredient_object = Ingredient(name = ingredient_name)
         ingredient_object.save()
-
+        
     #Building relation to recipe
     relation = IngredientQuantity(recipe = recipe,
                                   ingredient = ingredient_object,
