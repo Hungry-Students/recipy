@@ -14,6 +14,9 @@
     		    {% if error_message_link %}
 				    <div>
 				        Error : {{error_message_link}} <br>
+				        {% if existing_recipe %}
+					      <a href="/recipes/{{ existing_recipe.id }}/">Link towards the recipe</a><br>
+				        {% endif %}
 				    </div>
 			      {% endif %}
     		    <form method="post" action="{% url 'recipes:scrape' %}">

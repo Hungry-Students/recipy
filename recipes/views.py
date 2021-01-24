@@ -79,26 +79,30 @@ def handle_form(request):
 ### SUBMITTING VIA RECIPE-SCRAPPER ###
 
 def scrape(request):
-    try:
-        if not Recipe.objects.filter(url = request.POST['url']):
-            scraper = scrape_me(request.POST['url'])
-            yields_parser = YieldsParser()
-            yields_parser.parse(scraper.yields())
-            print(scraper.total_time())
-            new_recipe = Recipe(name = scraper.title(),
-                        instruction = scraper.instructions(),
-                        quantity = yields_parser.yields,
-                        quantity_unit = yields_parser.yields_unit,
-                        )
-            new_recipe.save()
-            ingredient_parser = IngredientParser()
-            for e in scraper.ingredients():
-            	ingredient_parser.parse(e)
-            	add_ingredient(new_recipe, ingredient_parser.ingredient_name, ingredient_parser.quantity, ingredient_parser.quantity_unit)
-        return HttpResponseRedirect(reverse('recipes:index'))
-    except WebsiteNotImplementedError:
-        msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
-        return write(request, error_message_link=msg)
+	try:
+		existing_recipes = Recipe.objects.filter(url = request.POST['url'])
+		if not existing_recipes:
+			scraper = scrape_me(request.POST['url'])
+			yields_parser = YieldsParser()
+			yields_parser.parse(scraper.yields())
+			print(scraper.total_time())
+			new_recipe = Recipe(name = scraper.title(),
+								instruction = scraper.instructions(),
+								quantity = yields_parser.yields,
+								quantity_unit = yields_parser.yields_unit,
+								url = request.POST['url']
+								)
+			new_recipe.save()
+			ingredient_parser = IngredientParser()
+			for e in scraper.ingredients():
+				ingredient_parser.parse(e)
+				add_ingredient(new_recipe, ingredient_parser.ingredient_name, ingredient_parser.quantity, ingredient_parser.quantity_unit)
+		else:
+			return write(request, error_message_link = 'this recipe already exists', existing_recipe = existing_recipes[0])
+		return HttpResponseRedirect(reverse('recipes:index'))
+	except WebsiteNotImplementedError:
+		msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
+		return write(request, error_message_link=msg)
 
 ### NON-VIEWS FUNCTION ###
 
