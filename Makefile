@@ -28,3 +28,7 @@ clean: ## Remove migrations and delete database
 	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 	find . -path "*/migrations/*.pyc" -delete
 	rm $(DB)
+
+.PHONY:	test
+test: ## Tests all the apps
+	$(PYTHON) $(MANAGER) test
