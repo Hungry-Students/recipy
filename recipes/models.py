@@ -35,7 +35,7 @@ class Recipe(models.Model):
     cook_time = models.DurationField(blank=True, null=True)
     cooking_method = models.CharField(max_length=200, blank=True, null=True)
     category = models.ForeignKey(RecipeCategory, on_delete=models.PROTECT, blank=True, null=True)
-    instruction = models.CharField(max_length=10000)
+    instructions = models.CharField(max_length=10000)
     quantity = models.IntegerField()
     quantity_unit = models.CharField(max_length=200)
     diet = models.ForeignKey(RestrictedDiet, on_delete=models.PROTECT, blank=True, null=True)

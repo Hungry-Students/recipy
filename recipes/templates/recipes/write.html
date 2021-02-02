@@ -41,59 +41,35 @@
 		        <form method="post" action="{% url 'recipes:handle_form' %}">
 		            {% csrf_token %}
 		            <table>
-		                <tr>
-		                    <td>Recipe title</td>
-		                    <td>
-		                        <input type="text" id="title" name="title" placeholder="Tartiflette">
-		                    </td>
-		                </tr>
-		                <tr>
-		                    <td>Yields</td>
-		                    <td>
-		                        <input type="number" id="quantity" name="quantity" placeholder="42" min="0">
-		                        <select name="quantity_unit" id="quantity_unit">
-		                            <option value="people">people</option>
-		                            <option value="servings">servings</option>
-		                        </select>
-		                    </td>
-		                </tr>
+		            {{ form.as_table }}
+		            </tr>
 		                <datalist id= "ingredients_list">
-				                <option value=""> None </option>
-						            {% for ingredient in ingredient_list %}
-							          <option value="{{ ingredient }}"> {{ ingredient }} </option>
-						            {% endfor %}
-					          </datalist>
-					          {%  for ingredient_number in range %}
-					          <tr>
-						            <td>Ingredient {{ ingredient_number }}</td>
-						            <td>
-							              <input list="ingredients_list" id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}">
-						            </td>
-					          </tr>
-					          <tr>
-						            <td>Quantity</td>
-						            <td>
-							              <input type="number" id="ingredient{{ ingredient_number }}_quantity" name="ingredient{{ ingredient_number }}_quantity" placeholder="42">
-							              <select name="ingredient{{ ingredient_number }}_quantity_unit" id="ingredient{{ ingredient_number }}_quantity_unit">
-								                <option value="units">units</option>
-								                <option value="grams">grams</option>
-							              </select>
-						            </td>
-					          </tr>
-					          {% endfor %}
-					          <tr>
-						            <td> Instructions </td>
-						            <td>
-							              <textarea name="instructions" id="instructions" rows="10" cols="40" placeholder="Type here the instructions to cook your recipe."></textarea>
-						            </td>
-					          </tr>
-					          <tr>
-				                <td></td>
-				                <td>
-				                    <input type="submit" value="Submit my recipe">
-				                </td>
-				            </tr>
-				        </table>
+				            <option value=""> None </option>
+						        {% for ingredient in ingredient_list %}
+							      <option value="{{ ingredient }}"> {{ ingredient }} </option>
+						        {% endfor %}
+					  	</datalist>
+						{%  for ingredient_number in range %}
+						<tr>
+							<td>Ingredient {{ ingredient_number }}</td>
+							<td>
+								  <input list="ingredients_list" id="ingredient{{ ingredient_number }}" name="ingredient{{ ingredient_number }}">
+							</td>
+						</tr>
+						<tr>
+							<td>Quantity</td>
+							<td>
+								  <input type="number" id="ingredient{{ ingredient_number }}_quantity" name="ingredient{{ ingredient_number }}_quantity" placeholder="42">
+								  <select name="ingredient{{ ingredient_number }}_quantity_unit" id="ingredient{{ ingredient_number }}_quantity_unit">
+										<option value="units">units</option>
+										<option value="grams">grams</option>
+								  </select>
+							</td>
+						</tr>
+						{% endfor %}
+				<tr>
+		            </table>
+		            <input type="submit" value="Submit my recipe">
 		        </form>
 		    </div>
 

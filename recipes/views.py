@@ -8,7 +8,7 @@ from django.urls import reverse
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity #, RecipeCategory, RestrictedDiet
 from .parser import IngredientParser, YieldsParser
-
+from .forms import RecipeForm
 
 def index(request):
     latest_recipes_list = Recipe.objects.order_by('-id')[:5]
@@ -27,55 +27,52 @@ def detail_recipe(request, recipe_id):
     return render(request, 'recipes/detail_recipe.html', context)
 
 ### SUBMITTING RECIPES ###
-
+    
 def write(request, error_message_link=None, error_message_form=None, existing_recipe=None):
-    '''View that allow users to submit their own recipes'''
-    ingredient_list = Ingredient.objects.order_by('name')
-    context = {
-        'range':range(1,6),
-        'ingredient_list' : ingredient_list,
-        'error_message_link' : error_message_link,
-        'error_message_form' : error_message_form,
-        'existing_recipe' : existing_recipe,
-    }
-    return render(request , 'recipes/write.html', context)
+	form = RecipeForm()
+	ingredient_list = Ingredient.objects.order_by('name')
+	context = {
+		'error_message_link' : error_message_link,
+		'error_message_form' : error_message_form,
+		'existing_recipe' : existing_recipe,
+		'form' : form,
+		'range':range(1,6),
+		'ingredient_list' : ingredient_list,
+	}
+	return render(request , 'recipes/write.html', context)
 
 ### SUBMITTING VIA A FORM ###
 
 def handle_form(request):
+	form = RecipeForm(request.POST)
+	if form.is_valid():
+	
+    	#checking for duplicates of recipes
+		temp = Recipe.objects.filter(name = form.cleaned_data['name'])
+		if temp:
+		    return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])
+		
+		#extracting ingredients and checking for ingredient duplicates
+		ingredient_quantities = {}
+		ingredient_quantity_units = {}
+		for i in range(1,6):
+		    ingredient_name = request.POST['ingredient'+str(i)]
+		    if ingredient_name == '':
+		        continue
+		    ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
+		    if ingredient_name in ingredient_quantities:
+		        return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
+		    ingredient_quantities[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity']
+		    ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit'].lower() 
+		    #note : we enforce lower case here for ingredient quantity unit. If upper case is needed in representation (e.g. cL), it will be transformed later on
+		
+		r = form.save()
+		
+		for ingredient_name in ingredient_quantities.keys():
+			add_ingredient(r, ingredient_name, ingredient_quantities[ingredient_name], ingredient_quantity_units[ingredient_name])
 
-    #checking for duplicates of recipes
-    temp = Recipe.objects.filter(name = request.POST['title'])
-    if temp:
-        return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])
-
-    #extracting ingredients and checking for ingredient duplicates
-    ingredient_quantities = {}
-    ingredient_quantity_units = {}
-    for i in range(1,6):
-        ingredient_name = request.POST['ingredient'+str(i)]
-        if ingredient_name == '':
-            continue
-        ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
-        if ingredient_name in ingredient_quantities:
-            return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
-        ingredient_quantities[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity']
-        ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit'].lower() 
-        #note : we enforce lower case here for ingredient quantity unit. If upper case is needed in representation (e.g. cL), it will be transformed later on
-
-    #building new recipe
-    new_recipe = Recipe(name = request.POST['title'],
-                        instruction = request.POST['instructions'],
-                        quantity = request.POST['quantity'],
-                        quantity_unit = request.POST['quantity_unit'],
-                        )
-    new_recipe.save()
-
-    #building Many-to-Many relationships for ingredients
-    for ingredient_name in ingredient_quantities.keys():
-        add_ingredient(new_recipe, ingredient_name, ingredient_quantities[ingredient_name], ingredient_quantity_units[ingredient_name])
-
-    return HttpResponseRedirect(reverse('recipes:index'))
+		return HttpResponseRedirect(reverse('recipes:index'))
+	return write(request, error_message_form = 'Something went wrong')
 
 
 ### SUBMITTING VIA RECIPE-SCRAPPER ###
@@ -105,8 +102,8 @@ def scrape(request):
 	except WebsiteNotImplementedError:
 		msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
 		return write(request, error_message_link=msg)
-
-### NON-VIEWS FUNCTION ###
+		
+### Non view functions ###
 
 def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quantity_unit):
     #Fetching or creating ingredient
@@ -124,3 +121,4 @@ def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quan
                                   quantity_unit = ingredient_quantity_unit
                                   )
     relation.save()
+
