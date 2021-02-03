@@ -9,6 +9,7 @@ from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity #, RecipeCategory, RestrictedDiet
 from .parser import IngredientParser, YieldsParser
 from .forms import RecipeForm
+import re
 
 def index(request):
     latest_recipes_list = Recipe.objects.order_by('-id')[:5]
@@ -29,7 +30,7 @@ def detail_recipe(request, recipe_id):
 ### SUBMITTING RECIPES ###
     
 def write(request, error_message_link=None, error_message_form=None, existing_recipe=None):
-	form = RecipeForm()
+	form = RecipeForm(initial = {'quantity_unit' : 'servings'})
 	ingredient_list = Ingredient.objects.order_by('name')
 	context = {
 		'error_message_link' : error_message_link,
@@ -52,23 +53,24 @@ def handle_form(request):
 		    return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])
 		
 		#extracting ingredients and checking for ingredient duplicates
-		ingredient_quantities = {}
-		ingredient_quantity_units = {}
-		for i in range(1,6):
-		    ingredient_name = request.POST['ingredient'+str(i)]
-		    if ingredient_name == '':
-		        continue
-		    ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
-		    if ingredient_name in ingredient_quantities:
-		        return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
-		    ingredient_quantities[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity']
-		    ingredient_quantity_units[ingredient_name] = request.POST['ingredient'+str(i)+'_quantity_unit'].lower() 
-		    #note : we enforce lower case here for ingredient quantity unit. If upper case is needed in representation (e.g. cL), it will be transformed later on
+		ingredient_names = {}
+		for e in request.POST.keys():
+			print(e)
+			m = re.search('ingredient(?P<id>[0-9]+)_name', e)
+			if m is not None:
+				ingredient_id = m.group('id')
+				ingredient_name = request.POST[e]
+				if ingredient_name == '':
+				    continue
+				ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
+				if ingredient_name in ingredient_names.values():
+				    return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
+				ingredient_names[ingredient_id] = ingredient_name
 		
 		r = form.save()
 		
-		for ingredient_name in ingredient_quantities.keys():
-			add_ingredient(r, ingredient_name, ingredient_quantities[ingredient_name], ingredient_quantity_units[ingredient_name])
+		for ingredient_id, ingredient_name in ingredient_names.items():
+			add_ingredient(r, ingredient_name, request.POST.get('ingredient'+ingredient_id+'_quantity', None), request.POST.get('ingredient'+ingredient_id+'_quantity_unit', None))
 
 		return HttpResponseRedirect(reverse('recipes:index'))
 	return write(request, error_message_form = 'Something went wrong')
@@ -112,7 +114,7 @@ def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quan
     else :
         ingredient_object = Ingredient(name = ingredient_name)
         ingredient_object.save()
-        
+
     #Building relation to recipe
     relation = IngredientQuantity(recipe = recipe,
                                   ingredient = ingredient_object,

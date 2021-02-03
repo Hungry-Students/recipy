@@ -44,32 +44,23 @@
 		            {% csrf_token %}
 		            <table>
 		            	{{ form.as_table }}
-		            </table>
-	            	<datalist id= "ingredients_list">
-				        <option value=""> None </option>
-						    {% for ingredient in ingredient_list %}
-							  <option value="{{ ingredient }}"> {{ ingredient }} </option>
-						    {% endfor %}
-				  	</datalist>
-	            	<table id="ingredient_input">
-						<tr>
-							<td>Ingredient 1</td>
-							<td>
-								  <input list="ingredients_list" id="ingredient1" name="ingredient1">
-							</td>
-						</tr>
-						<tr>
-							<td>Quantity</td>
-							<td>
-								  <input type="number" id="ingredient1_quantity" name="ingredient1_quantity" placeholder="42">
-								  <select name="ingredient1_quantity_unit" id="ingredient1_quantity_unit">
-										<option value="units">units</option>
-										<option value="grams">grams</option>
-								  </select>
-							</td>
-						</tr>
-		            </table>
-		            <button type="button" onclick=addIngredient() >Add ingredient</button><br>
+		            
+			        	<datalist id= "ingredients_list">
+						    <option value=""> None </option>
+								{% for ingredient in ingredient_list %}
+								  <option value="{{ ingredient }}"> {{ ingredient }} </option>
+								{% endfor %}
+					  	</datalist>
+					  	<tbody>
+					  		<th> Ingredients </th>
+					    	<table id="ingredient_input">
+								<script> addIngredient() </script>
+						    </table>
+						    <tr>
+						    	<button type="button" onclick=addIngredient() >Add ingredient</button><br>
+						    <tr>
+						</tbody>
+				    </table>
 		            <input type="submit" value="Submit my recipe">
 		        </form>
 		    </div>
