@@ -36,7 +36,6 @@ def write(request, error_message_link=None, error_message_form=None, existing_re
 		'error_message_form' : error_message_form,
 		'existing_recipe' : existing_recipe,
 		'form' : form,
-		'range':range(1,6),
 		'ingredient_list' : ingredient_list,
 	}
 	return render(request , 'recipes/write.html', context)
