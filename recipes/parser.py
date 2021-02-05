@@ -25,7 +25,12 @@ class IngredientParser():
 		spaces = "[ \\r\\n\\t]*"
 		# Optionnal quantity
 		regexp = "(?P<quantity>[0-9]+)?"
+		regexp_quantity = "(?P<quantity>[0-9]+)?"
 		regexp += spaces
+		regexp_quantity += spaces
+		
+		#For quantities parsing, we first parse number + string and then will parse the unit separately
+		regexp_quantity += "(?P<quantity_unit>[\w'.\- ]*)"
 
 		# Optionnal quantity unit and separator
 		regexp_unit = "(?P<quantity_unit>"
@@ -57,10 +62,10 @@ class IngredientParser():
 		regexp+=spaces
 
 		# Ingredient name
-		regexp += "(?P<ingredient_name>[\w'.\- ]+\w)"
+		regexp += "(?P<ingredient_name>[\w'.\- ]*\w)"
 		regexp+=spaces
 		
-		return regexp, regexp_unit
+		return regexp, regexp_unit, regexp_quantity
 	
 	def __init__(self):
 	
@@ -70,7 +75,7 @@ class IngredientParser():
 		self.ingredient_name = None
 	
 		###Constructing regexps in order to parse input###
-		self.regexp, self.regexp_unit = self.build_regexps()
+		self.regexp, self.regexp_unit, self.regexp_quantity = self.build_regexps()
 		
 	def match_unit_token(self, s):
 		#matches s to the token assigned in the database. If not possible, returns s. WARNING : not time efficient
@@ -86,12 +91,28 @@ class IngredientParser():
 			return self.match_unit_token(m.group('quantity_unit'))
 		else:
 			return s
+			
+	def parse_quantity(self, s):
+		m = re.search(self.regexp_quantity, s)
+		quantity, unit = None, None
+		print(self.regexp_quantity)
+		if m is not None:
+			quantity = m.group('quantity')
+			print(quantity, s)
+			if quantity is not None:
+				quantity = int(quantity)
+			unit = 	m.group('quantity_unit')
+			if unit is not None:
+				unit = self.parse_unit(unit)
+		return (quantity, unit)
 	
 	def parse(self, s):
 		#parses an ingredient and the quantities requiered in the recipe 
 		m = re.search(self.regexp, s)
 		if m is not None:
 			self.quantity = m.group('quantity')
+			if self.quantity is not None:
+				self.quantity = int(self.quantity)
 			self.quantity_unit = self.match_unit_token(m.group('quantity_unit'))
 			self.ingredient_name = m.group('ingredient_name')
 			return 0

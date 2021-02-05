@@ -55,7 +55,6 @@ def handle_form(request):
 		#extracting ingredients and checking for ingredient duplicates
 		ingredient_names = {}
 		for e in request.POST.keys():
-			print(e)
 			m = re.search('ingredient(?P<id>[0-9]+)_name', e)
 			if m is not None:
 				ingredient_id = m.group('id')
@@ -69,8 +68,10 @@ def handle_form(request):
 		
 		r = form.save()
 		
+		p = IngredientParser()
 		for ingredient_id, ingredient_name in ingredient_names.items():
-			add_ingredient(r, ingredient_name, request.POST.get('ingredient'+ingredient_id+'_quantity', None), request.POST.get('ingredient'+ingredient_id+'_quantity_unit', None))
+			ingredient_quantity, ingredient_unit = p.parse_quantity(request.POST.get('ingredient'+ingredient_id+'_quantity', ''))
+			add_ingredient(r, ingredient_name, ingredient_quantity, ingredient_unit)
 
 		return HttpResponseRedirect(reverse('recipes:index'))
 	return write(request, error_message_form = 'Something went wrong')

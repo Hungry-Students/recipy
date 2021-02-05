@@ -16,11 +16,7 @@ function addIngredient() {
 	</td>
 	<td>Quantity</td>
 	<td>
-		<input type="number" id="ingredient${ingredient_counter}_quantity" name="ingredient${ingredient_counter}_quantity" placeholder="42">
-		<select name="ingredient${ingredient_counter}_quantity_unit" id="ingredient${ingredient_counter}_quantity_unit">
-			<option value="units">units</option>
-			<option value="grams">grams</option>
-		</select>
+		<input id="ingredient${ingredient_counter}_quantity" name="ingredient${ingredient_counter}_quantity" placeholder="42 spoons">
 	</td>
 	<td>
 		<button type="button" onclick=removeIngredient(${ingredient_counter}) >Remove ingredient</button><br>
