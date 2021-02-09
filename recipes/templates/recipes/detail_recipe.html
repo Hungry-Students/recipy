@@ -5,42 +5,6 @@
     <title>{{recipe.name}}</title>
   </head>
   <body>
-    <h1> Recipe : {{recipe.name}}</h1>
-    
-    <h2> Quantité et temps de préparation </h2>
-    
-    <p>
-    	Quantité : {{recipe.quantity}} {{recipe.quantity_unit}}. <br><br>
-    	
-    	Temps de préparation : {{recipe.cook_time}} min.<br>
-    </p>
-    
-    <h2> Ingredients </h2>
-    <p>
-    	{% if ingredient_quantities %}
-			<ul>
-			{% for x in ingredient_quantities %}
-				<li>
-					{{ x.ingredient }}
-					{% if x.quantity %}	
-						( {{x.quantity}}
-						 {% if x.quantity_unit %}
-							 {{x.quantity_unit}}
-						 {% endif %}
-						)
-					{% endif %}
-				</li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<p>No ingredients are listed for this recipe.</p>
-		{% endif %}
-    </p>
-    
-    <h2> Instructions de préparation </h2>
-    
-    <p>
-    	<pre>{{recipe.instructions}}</pre>
-    </p>
+      {% include "recipes/display_recipe.html" with recipe=recipe %}
   </body>
 </html>

@@ -1,0 +1,32 @@
+<h2>{{ recipe.name }}</h2>
+
+For {{ recipe.quantity }} {{ recipe.quantity_unit }}.<br>
+
+Cooking time: {{ recipe.cook_time }}.<br><br>
+
+{% if recipe.diet %}
+{{ recipe.diet }}
+{% endif %}
+
+<h3>Ingredients</h3>
+
+<table>
+    <head>
+        <tr>
+            <th>Quantity</th>
+            <th>Ingredient</th>
+        </tr>
+    </head>
+    <body>
+        {% for iq in recipe.ingredientquantity_set.all %}
+        <tr>
+            <td>{{ iq.quantity }}{% if iq.quantity_unit %}{{ iq.quantity_unit }}{% endif %}</td>
+            <td>{{ iq.ingredient }}</td>
+        </tr>
+        {% endfor %}
+    </body>
+</table>
+
+<h3>Recipe</h3>
+
+{{ recipe.instructions|linebreaks }}
