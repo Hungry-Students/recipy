@@ -1,80 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Submit a recipe</title>
-    </head>
+{% extends 'base.html' %}
 
-    <body>
-    	{% load static %}
-    	<script src="{% static 'recipes/ingredient_form_script.js' %}"></script>
+{% block title %}Submit a recipe{% endblock %}
 
-        {% if request.user.is_authenticated %}
+{% block content %}
 
-    	  <div>
-    		    <h2>Submit a link to a recipe ...</h2><br>
-    		    {% if error_message_link %}
-				    <div>
-				        Error : {{error_message_link}} <br>
-				        {% if existing_recipe %}
-					      <a href="/recipes/{{ existing_recipe.id }}/">Link towards the recipe</a><br>
-				        {% endif %}
-				    </div>
-			      {% endif %}
-    		    <form method="post" action="{% url 'recipes:scrape' %}">
-		            {% csrf_token %}
-		            <input type="text" id="url" name="url" placeholder="https://www.cuisine-libre.org/potee-auvergnate">
-                <input type="submit" value="Submit">
-            </form>
-    	  </div>
+{% load static %}
+<script src="{% static 'recipes/ingredient_form_script.js' %}"></script>
 
-    	  <div>
-		        <h2>... Or write your own recipe</h2>
-		        {% if error_message_form %}
-				    <div>
-				        Error : {{error_message_form}} <br>
+{% if request.user.is_authenticated %}
 
-				        {% if existing_recipe %}
-					      <a href="/recipes/{{ existing_recipe.id }}/">Link towards the recipe</a><br>
-				        {% endif %}
+<div>
+    <h2>Submit a link to a recipe ...</h2><br>
+    {% if error_message_link %}
+		<div>
+				Error : {{error_message_link}} <br>
+				{% if existing_recipe %}
+				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">Link towards the recipe</a><br>
+				{% endif %}
+		</div>
+		{% endif %}
+    <form method="post" action="{% url 'recipes:scrape' %}">
+		    {% csrf_token %}
+		    <input type="text" id="url" name="url" placeholder="https://www.cuisine-libre.org/potee-auvergnate">
+        <input type="submit" value="Submit">
+    </form>
+</div>
 
-				    </div>
-			      {% endif %}
-		        <form method="post" action="{% url 'recipes:handle_form' %}">
-		            {% csrf_token %}
-		            <table>
-		            	{{ form.as_table }}
-		            
-			        	<datalist id= "ingredients_list">
+<div>
+		<h2>... Or write your own recipe</h2>
+		{% if error_message_form %}
+		<div>
+				Error : {{error_message_form}} <br>
+
+				{% if existing_recipe %}
+				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">Link towards the recipe</a><br>
+				{% endif %}
+
+		</div>
+		{% endif %}
+		<form method="post" action="{% url 'recipes:handle_form' %}">
+		    {% csrf_token %}
+		    <table>
+		        {{ form.as_table }}
+
+			      <datalist id= "ingredients_list">
 						    <option value=""> None </option>
 								{% for ingredient in ingredient_list %}
-								  <option value="{{ ingredient }}"> {{ ingredient }} </option>
+								<option value="{{ ingredient }}"> {{ ingredient }} </option>
 								{% endfor %}
-					  	</datalist>
-					  	<tbody>
+					  </datalist>
+					  <tbody>
 					  		<tr>
-						  		<th> Cooking time: </th>
-						  		<td> <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h<input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min</td>
+						  		  <th> Cooking time: </th>
+						  		  <td> <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h<input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min</td>
 					  		</tr>
 					  		<tr>
-					  			<th> Ingredients: </th>
-								<table id="ingredient_input">
-									<script> addIngredient() </script>
-								</table>
+					  			  <th> Ingredients: </th>
+								    <table id="ingredient_input">
+									      <script> addIngredient() </script>
+								    </table>
 						    </tr>
 						    <tr>
-						    	<button type="button" onclick=addIngredient() >Add ingredient</button><br>
-						    <tr>
+						    	  <button type="button" onclick=addIngredient() >Add ingredient</button><br>
+						        <tr>
 						</tbody>
-				    </table>
-		            <input type="submit" value="Submit my recipe">
-		        </form>
-		    </div>
+				</table>
+		    <input type="submit" value="Submit my recipe">
+		</form>
+</div>
 
-        {% else %}
+{% else %}
 
-        <p>You need to <a href="{% url 'login' %}?next={{request.path}}">log in</a> to perform this action </p>
+<p>You need to <a href="{% url 'login' %}?next={{request.path}}">log in</a> to perform this action </p>
 
-        {% endif %}
-    </body>
-</html>
+{% endif %}
+
+{% endblock %}

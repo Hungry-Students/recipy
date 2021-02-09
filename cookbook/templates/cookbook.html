@@ -1,8 +1,8 @@
-{% extends 'cookbook_base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Cookbook{% endblock %}
 
-{% block body_block %}
+{% block content %}
 
 {% for category, recipes in categories.items %}
 <h2>{{ category}}</h2>

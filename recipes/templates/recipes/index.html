@@ -1,21 +1,19 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Recipy</title>
-  </head>
-  <body>
-    <div>
-    	<h1> Dernières recettes postées </h1>
-		{% if latest_recipes_list %}
-			<ul>
-			{% for recipe in latest_recipes_list %}
-				<li><a href="/recipes/{{ recipe.id }}/">{{ recipe.name }}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<p>No recipes are available.</p>
-		{% endif %}
-	</div>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Browse recipes{% endblock %}
+
+{% block content %}
+
+<h2>Latest recipes</h2>
+
+{% if latest_recipes_list %}
+<ul>
+    {% for recipe in latest_recipes_list %}
+    <li><a href="{% url 'recipes:detail_recipe' recipe.id %}">{{ recipe.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No recipes available 😢</p>
+{% endif %}
+
+{% endblock %}
