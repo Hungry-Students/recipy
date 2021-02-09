@@ -1,14 +1,16 @@
 from django import forms
 from django.forms import ModelForm, Textarea
-from .models import Recipe, Ingredient, IngredientQuantity
+from .models import Recipe, Ingredient, IngredientQuantity, RestrictedDiet
 
 class RecipeForm(ModelForm):
 	class Meta:
 		model = Recipe
-		fields = ['name', 'quantity', 'quantity_unit', 'instructions']
+		fields = ['name', 'quantity', 'quantity_unit', 'diets', 'instructions']
 		widgets = {
 			'instructions': Textarea(attrs={'cols': 80, 'rows': 20}),
+			'diets' : forms.CheckboxSelectMultiple,
 		}
+
 	
 	def save(self):
 		#building new recipe
@@ -18,12 +20,9 @@ class RecipeForm(ModelForm):
 		r.quantity = self.cleaned_data['quantity']
 		r.quantity_unit = self.cleaned_data['quantity_unit']
 		r.save()
-		return r
 		
-		r.ingredients.all().delete()
-		for i in range(1,6):
-			add_ingredient(r, self.cleaned_data['ingredient_'+str(i)], 5, 'x')
-		"""
-		for ingredient_name in ingredient_quantities.keys():
-		    add_ingredient(new_recipe, ingredient_name, ingredient_quantities[ingredient_name], ingredient_quantity_units[ingredient_name])
-		"""
+		for diet in self.cleaned_data['diets']:
+			r.diets.add(diet)			
+		
+		return r
+

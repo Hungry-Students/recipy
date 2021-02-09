@@ -95,10 +95,8 @@ class IngredientParser():
 	def parse_quantity(self, s):
 		m = re.search(self.regexp_quantity, s)
 		quantity, unit = None, None
-		print(self.regexp_quantity)
 		if m is not None:
 			quantity = m.group('quantity')
-			print(quantity, s)
 			if quantity is not None:
 				quantity = int(quantity)
 			unit = 	m.group('quantity_unit')

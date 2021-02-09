@@ -7,6 +7,6 @@ from.models import Ingredient, Recipe, RecipeCategory, RestrictedDiet, Ingredien
 
 admin.site.register(Ingredient)
 admin.site.register(Recipe)
-#admin.site.register(RestrictedDiet)
+admin.site.register(RestrictedDiet)
 #admin.site.register(RecipeCategory)
 admin.site.register(IngredientQuantity)

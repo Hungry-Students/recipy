@@ -32,13 +32,13 @@ class Recipe(models.Model):
     url = models.CharField(max_length=400, blank=True, null=True)
 
     # Properties from https://schema.org/Recipe
-    cook_time = models.DurationField(blank=True, null=True)
+    cook_time = models.IntegerField(blank=True, null=True) #in minutes
     cooking_method = models.CharField(max_length=200, blank=True, null=True)
     category = models.ForeignKey(RecipeCategory, on_delete=models.PROTECT, blank=True, null=True)
     instructions = models.CharField(max_length=10000)
     quantity = models.IntegerField(blank=True, null=True)
     quantity_unit = models.CharField(max_length=200, blank=True, null=True)
-    diet = models.ForeignKey(RestrictedDiet, on_delete=models.PROTECT, blank=True, null=True)
+    diets = models.ManyToManyField(RestrictedDiet)
 
     def __str__(self):
         return self.name
