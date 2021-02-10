@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Search for a recipe" %}{% endblock %}
+
+{% block content %}
+
+{% load static %}
+<script src="{% static 'recipes/ingredient_search_script.js' %}"></script>
+
+<div id ="search">
+<form method="post" action="{% url 'recipes:search' %}">
+	{% csrf_token %}
+	
+	<datalist id= "ingredients_list">
+		<option value=""> None </option>
+		{% for ingredient in ingredient_list %}
+			<option value="{{ ingredient }}"> {{ ingredient }} </option>
+		{% endfor %}
+	</datalist>
+	
+	<table>
+		<tr>
+			<th>{% trans "By name:"%}</th>
+			<td> <input type="text" name="recipe_name" id="name" placeholder="Pizza"> </td>
+		</tr>
+		<tr>
+			<th>{% trans "By ingredients:" %}</th>
+			<table id="ingredient_input">
+				  <script> addIngredient() </script>
+			</table>
+	    </tr>
+	    <tr>
+			<button type="button" onclick=addIngredient()>
+			    {% trans "Add ingredient" %}
+			</button>
+		<tr>
+	</table><br>
+	
+	<input type="submit" value={% trans "Search" %}>
+</form>
+</div>
+
+<div id=results>
+	{% if has_results %}
+		{% trans "Résultats :"%}
+		{%if results%}
+			<ul>
+				{% for recipe in results %}
+				<li><a href="{% url 'recipes:detail_recipe' recipe.id %}">{{ recipe.name }}</a></li>
+				{% endfor %}
+			</ul>
+		{% else %}
+				<p>{% trans "No recipes available for this search 😢" %}</p>
+		{% endif %}
+	{% endif %}
+
+</div>
+
+{% endblock %}

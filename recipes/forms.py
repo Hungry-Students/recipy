@@ -5,7 +5,7 @@ from .models import Recipe, Ingredient, IngredientQuantity, RestrictedDiet
 class RecipeForm(ModelForm):
 	class Meta:
 		model = Recipe
-		fields = ['name', 'quantity', 'quantity_unit', 'diets', 'instructions']
+		fields = ['name', 'category', 'quantity', 'quantity_unit', 'diets', 'instructions']
 		widgets = {
 			'instructions': Textarea(attrs={'cols': 80, 'rows': 20}),
 			'diets' : forms.CheckboxSelectMultiple,

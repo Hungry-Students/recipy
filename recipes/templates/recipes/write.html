@@ -48,32 +48,32 @@
 		        {{ form.as_table }}
 
 			      <datalist id= "ingredients_list">
-						    <option value=""> None </option>
-								{% for ingredient in ingredient_list %}
-								<option value="{{ ingredient }}"> {{ ingredient }} </option>
-								{% endfor %}
-					  </datalist>
-					  <tbody>
-					  		<tr>
-						  		  <th>{% trans "Cooking time:" %}</th>
-						  		  <td>
-                        <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h
-                        <input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min
-                    </td>
-					  		</tr>
-					  		<tr>
-					  			  <th>{% trans "Ingredients:" %}</th>
-								    <table id="ingredient_input">
-									      <script> addIngredient() </script>
-								    </table>
-						    </tr>
-						    <tr>
-						    	  <button type="button" onclick=addIngredient()>
-                        {% trans "Add ingredient" %}
-                    </button><br>
-						        <tr>
-						</tbody>
-				</table>
+					    <option value=""> None </option>
+						{% for ingredient in ingredient_list %}
+							<option value="{{ ingredient }}"> {{ ingredient }} </option>
+						{% endfor %}
+				  </datalist>
+				  <tbody>
+				  		<tr>
+					  		  <th>{% trans "Cooking time:" %}</th>
+					  		  <td>
+						        <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h
+						        <input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min
+						    </td>
+				  		</tr>
+				  		<tr>
+				  			  <th>{% trans "Ingredients:" %}</th>
+							    <table id="ingredient_input">
+								      <script> addIngredient() </script>
+							    </table>
+					    </tr>
+					    <tr>
+							<button type="button" onclick=addIngredient()>
+						        {% trans "Add ingredient" %}
+						    </button>
+					    <tr>
+					</tbody>
+				</table><br>
 		    <input type="submit" value={% trans "Submit my recipe" %}>
 		</form>
 </div>

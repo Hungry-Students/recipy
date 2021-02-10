@@ -114,6 +114,26 @@ def scrape(request):
     except WebsiteNotImplementedError:
         msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
         return write(request, error_message_link=msg)
+        
+        
+### SEARCHING RECIPES ###
+def search(request):
+	ingredient_list = Ingredient.objects.order_by('name')
+	if request.method == 'GET':
+		context = {
+			'ingredient_list' : ingredient_list,
+			'results' : None,
+			'has_results': False,
+		}
+		return render(request , 'recipes/search.html', context)
+	else:
+		querry = Recipe.objects.filter(name__icontains = request.POST['recipe_name'])
+		context = {
+			'ingredient_list' : ingredient_list,
+			'results' : querry,
+			'has_results': True,
+		}
+		return render(request , 'recipes/search.html', context)
 
 ### Non view functions ###
 

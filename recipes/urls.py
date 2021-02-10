@@ -9,4 +9,5 @@ urlpatterns = [
     path('write', views.write, name='write'),
     path('handle_form', views.handle_form, name='handle_form'),
     path('scrape', views.scrape, name='scrape'),
+    path('search', views.search, name='search'),
 ]
