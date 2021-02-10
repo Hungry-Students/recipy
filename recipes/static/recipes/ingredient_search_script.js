@@ -16,7 +16,7 @@ function addIngredient() {
 	</td>
 	<td>Exclude</td>
 	<td>
-		<input type="checkbox" id="exclude${ingredient_counter}" name="exclude${ingredient_counter}">
+		<input type="checkbox" id="exclude_${ingredient_counter}" name="exclude_${ingredient_counter}">
 	</td>
 	<td>
 		<button type="button" onclick=removeIngredient(${ingredient_counter}) >Remove ingredient</button><br>

@@ -8,7 +8,9 @@
 
 {% load static %}
 <script src="{% static 'recipes/ingredient_search_script.js' %}"></script>
-
+<div id="title">
+	<h2>Search a recipe</h2>
+</div>
 <div id ="search">
 <form method="post" action="{% url 'recipes:search' %}">
 	{% csrf_token %}
@@ -22,11 +24,34 @@
 	
 	<table>
 		<tr>
-			<th>{% trans "By name:"%}</th>
-			<td> <input type="text" name="recipe_name" id="name" placeholder="Pizza"> </td>
+			<th>{% trans "Name:"%}</th>
+			<td> <input type="search" name="recipe_name" id="name" placeholder="Pizza"> </td>
 		</tr>
+		
 		<tr>
-			<th>{% trans "By ingredients:" %}</th>
+			<th>{%trans "Type of recipe:"%}</th>
+			<td>
+				<select name="recipe_category" id="recipe_category">
+					<option value="">-----</option>
+					{% for category in recipe_category_list %}
+						<option value="{{ category }}"> {{ category }} </option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
+		
+		<tr>
+			<th>{% trans "Specify diet restrictions:" %}<th>
+			<td>
+				{% for diet in diet_list %}
+					<input type="checkbox" id="diet_{{diet}}" name="diets" value="{{diet}}">
+					<label for="diet_{{diet}}">{{diet}}</label>
+				{% endfor %}
+			</td>			
+		</tr>
+	
+		<tr>
+			<th>{% trans "Ingredients:" %}</th>
 			<table id="ingredient_input">
 				  <script> addIngredient() </script>
 			</table>

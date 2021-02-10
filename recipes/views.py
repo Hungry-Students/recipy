@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect #, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
-from .models import Ingredient, Recipe, IngredientQuantity #, RecipeCategory, RestrictedDiet
+from .models import Ingredient, Recipe, IngredientQuantity, RecipeCategory, RestrictedDiet
 from .parser import IngredientParser, YieldsParser
 from .forms import RecipeForm
 
@@ -44,10 +44,11 @@ def handle_form(request):
     form = RecipeForm(request.POST)
     if form.is_valid():
 
-        #checking for duplicates of recipes
+        #checking for duplicates of recipes, we don't really want that anymore (was more of a proof of concept)
+        """
         temp = Recipe.objects.filter(name = form.cleaned_data['name'])
         if temp:
-            return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])
+            return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])"""
 
         #extracting ingredients and checking for ingredient duplicates. Note : we do that before saving the recipe to avoid incomplete recipes.
         ingredient_names = {}
@@ -83,7 +84,7 @@ def handle_form(request):
             add_ingredient(r, ingredient_name, ingredient_quantity, ingredient_unit)
 
         return HttpResponseRedirect(reverse('recipes:index'))
-    return write(request, error_message_form = 'Something went wrong')
+    return write(request, error_message_form = 'Submitted an invalid form')
 
 ### SUBMITTING VIA RECIPE-SCRAPPER ###
 
@@ -119,17 +120,44 @@ def scrape(request):
 ### SEARCHING RECIPES ###
 def search(request):
 	ingredient_list = Ingredient.objects.order_by('name')
+	recipe_category_list = RecipeCategory.objects.all()
+	diet_list = RestrictedDiet.objects.all()
 	if request.method == 'GET':
 		context = {
 			'ingredient_list' : ingredient_list,
+			'recipe_category_list' : recipe_category_list,
+			'diet_list' : diet_list,
 			'results' : None,
 			'has_results': False,
 		}
 		return render(request , 'recipes/search.html', context)
 	else:
+		#filtering name
 		querry = Recipe.objects.filter(name__icontains = request.POST['recipe_name'])
+		#filtering category
+		if request.POST['recipe_category']:
+			querry = querry.filter(category__name = request.POST['recipe_category'])
+		#filtering diet
+		for diet in request.POST.getlist('diets'):
+			querry = querry.filter(diets__name=diet)
+		#filtering ingredients
+		for e in request.POST.keys():
+			m = re.search('ingredient(?P<id>[0-9]+)_name', e)
+			if m is not None:
+				ingredient_id = m.group('id')
+				ingredient_name = request.POST[e]
+				if ingredient_name == '':
+					continue
+				ingredient_name = ingredient_name.lower() #note : ingredients are stored using lowercase
+				if request.POST.get('exclude_'+ingredient_id,None):
+					querry = querry.exclude(ingredients__name=ingredient_name)
+				else:
+					querry = querry.filter(ingredients__name=ingredient_name)
+					                
 		context = {
 			'ingredient_list' : ingredient_list,
+			'recipe_category_list' : recipe_category_list,
+			'diet_list' : diet_list,
 			'results' : querry,
 			'has_results': True,
 		}
