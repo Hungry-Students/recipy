@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entry.recipe.name }}{% endblock %}
+
+{% block content %}
+{% include 'recipes/display_recipe.html' with recipe=entry.recipe %}
+{% endblock %}
