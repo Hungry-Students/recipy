@@ -1,39 +1,43 @@
 {% extends 'base.html' %}
 
-{% block title %}Submit a recipe{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Submit a recipe" %}{% endblock %}
 
 {% block content %}
 
 {% load static %}
 <script src="{% static 'recipes/ingredient_form_script.js' %}"></script>
 
-{% if request.user.is_authenticated %}
-
 <div>
-    <h2>Submit a link to a recipe ...</h2><br>
+    <h2>{% trans "Submit a link to a recipe..." %}</h2><br>
     {% if error_message_link %}
 		<div>
-				Error : {{error_message_link}} <br>
+				{% trans "Error:" %} {{error_message_link}} <br>
 				{% if existing_recipe %}
-				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">Link towards the recipe</a><br>
+				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">
+            {% trans "Link towards the recipe" %}
+        </a><br>
 				{% endif %}
 		</div>
 		{% endif %}
     <form method="post" action="{% url 'recipes:scrape' %}">
 		    {% csrf_token %}
 		    <input type="text" id="url" name="url" placeholder="https://www.cuisine-libre.org/potee-auvergnate">
-        <input type="submit" value="Submit">
+        <input type="submit" value={% trans "Submit" %}>
     </form>
 </div>
 
 <div>
-		<h2>... Or write your own recipe</h2>
+		<h2>{% trans "... Or write your own recipe" %}</h2>
 		{% if error_message_form %}
 		<div>
-				Error : {{error_message_form}} <br>
+				{% trans "Error:" %} {{error_message_link}} <br>
 
 				{% if existing_recipe %}
-				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">Link towards the recipe</a><br>
+				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">
+            {% trans "Link towards the recipe" %}
+        </a><br>
 				{% endif %}
 
 		</div>
@@ -51,28 +55,27 @@
 					  </datalist>
 					  <tbody>
 					  		<tr>
-						  		  <th> Cooking time: </th>
-						  		  <td> <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h<input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min</td>
+						  		  <th>{% trans "Cooking time:" %}</th>
+						  		  <td>
+                        <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h
+                        <input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min
+                    </td>
 					  		</tr>
 					  		<tr>
-					  			  <th> Ingredients: </th>
+					  			  <th>{% trans "Ingredients:" %}</th>
 								    <table id="ingredient_input">
 									      <script> addIngredient() </script>
 								    </table>
 						    </tr>
 						    <tr>
-						    	  <button type="button" onclick=addIngredient() >Add ingredient</button><br>
+						    	  <button type="button" onclick=addIngredient()>
+                        {% trans "Add ingredient" %}
+                    </button><br>
 						        <tr>
 						</tbody>
 				</table>
-		    <input type="submit" value="Submit my recipe">
+		    <input type="submit" value={% trans "Submit my recipe" %}>
 		</form>
 </div>
-
-{% else %}
-
-<p>You need to <a href="{% url 'login' %}?next={{request.path}}">log in</a> to perform this action </p>
-
-{% endif %}
 
 {% endblock %}

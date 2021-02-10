@@ -2,6 +2,7 @@
 from django.db import models
 from recipes.models import Recipe
 from users.models import User
+from django.utils.translation import gettext as _
 
 class Cookbook(models.Model):
     owner = models.OneToOneField(
@@ -14,7 +15,7 @@ class Cookbook(models.Model):
 
     def __str__(self):
         possesive = '' if self.owner.username[-1] == 's' else 's'
-        return "%s'%s cookbook" % (self.owner.username, possesive)
+        return _("%name'%possessive cookbook" % {'name':self.owner.username, 'possessive':possesive})
 
 class Entry(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)

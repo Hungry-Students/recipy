@@ -92,9 +92,9 @@ AUTH_USER_MODEL = 'users.User'
 
 # Login/out redirect
 
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'users:dashboard'
 
-LOGOUT_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'users:dashboard'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

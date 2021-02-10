@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-10 11:49+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cookbook/models.py:18
+msgid "%name'%possessive cookbook"
+msgstr "Livre de recettes de %name"
+
+#: cookbook/templates/cookbook.html:5
+msgid "Cookbook"
+msgstr "Livre de recettes"
+
+#: recipes/templates/recipes/display_recipe.html:5
+#, python-format
+msgid ""
+"\n"
+"For %(quantity)s %(unit)s.<br>\n"
+msgstr ""
+
+#: recipes/templates/recipes/display_recipe.html:9
+#: recipes/templates/recipes/write.html:58
+msgid "Cooking time:"
+msgstr "Temps de cuisson"
+
+#: recipes/templates/recipes/display_recipe.html:15
+#: recipes/templates/recipes/display_recipe.html:21
+msgid "Ingredients"
+msgstr "Ingrédients"
+
+#: recipes/templates/recipes/display_recipe.html:20
+msgid "Quantity"
+msgstr "Quantité"
+
+#: recipes/templates/recipes/display_recipe.html:34
+msgid "Recipe"
+msgstr "Recette"
+
+#: recipes/templates/recipes/index.html:5
+msgid "Browse recipes"
+msgstr "Parcourir les recettes"
+
+#: recipes/templates/recipes/index.html:9
+msgid "Latest recipes"
+msgstr "Dernières recettes"
+
+#: recipes/templates/recipes/index.html:18
+msgid "No recipes available 😢"
+msgstr "Pas de recettes disponibles 😢"
+
+#: recipes/templates/recipes/write.html:5
+msgid "Submit a recipe"
+msgstr "Proposer une recette"
+
+#: recipes/templates/recipes/write.html:13
+msgid "Submit a link to a recipe..."
+msgstr "Proposer un lien vers une recette..."
+
+#: recipes/templates/recipes/write.html:16
+#: recipes/templates/recipes/write.html:35
+msgid "Error:"
+msgstr "Erreur :"
+
+#: recipes/templates/recipes/write.html:19
+#: recipes/templates/recipes/write.html:39
+msgid "Link towards the recipe"
+msgstr "Lien vers la recette"
+
+#: recipes/templates/recipes/write.html:27
+msgid "Submit"
+msgstr "Proposer"
+
+#: recipes/templates/recipes/write.html:32
+msgid "... Or write your own recipe"
+msgstr "... Ou écrire votre recette"
+
+#: recipes/templates/recipes/write.html:65
+msgid "Ingredients:"
+msgstr "Ingrédients"
+
+#: recipes/templates/recipes/write.html:72
+msgid "Add ingredient"
+msgstr "Ajouter un ingrédient"
+
+#: recipes/templates/recipes/write.html:77
+msgid "Submit my recipe"
+msgstr "Proposer ma recette"
+
+#: templates/base.html:14
+msgid "Welcome to ReciPy!"
+msgstr "Bienvenue sur ReciPy"
+
+#: templates/base.html:27
+msgid "Log out"
+msgstr "Déconnexion"
+
+#: templates/base.html:29
+msgid "Log in"
+msgstr "Connexion"
+
+#: templates/base.html:31
+msgid "Code"
+msgstr "Code"
+
+#: users/templates/registration/login.html:11
+#: users/templates/users/dashboard.html:23
+msgid "Login"
+msgstr "Connexion"
+
+#: users/templates/registration/login.html:14
+#: users/templates/registration/password_change_done.html:8
+#: users/templates/registration/password_change_form.html:14
+#: users/templates/registration/password_reset_form.html:14
+msgid "Back to dashboard"
+msgstr "Retour au tableau de bord"
+
+#: users/templates/registration/login.html:15
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+#: users/templates/registration/password_change_done.html:6
+msgid "Password changed"
+msgstr "Mot de passe modifié"
+
+#: users/templates/registration/password_change_form.html:6
+#: users/templates/users/dashboard.html:21
+msgid "Change password"
+msgstr "Modifier le mot de passe"
+
+#: users/templates/registration/password_change_form.html:11
+msgid "Change"
+msgstr "Modifier"
+
+#: users/templates/registration/password_done.html:6
+msgid "Password reset done"
+msgstr "Mot de passe réinitialisé"
+
+#: users/templates/registration/password_done.html:8
+#: users/templates/registration/password_reset_complete.html:8
+msgid "Back to login"
+msgstr "Retour à la page de connexion"
+
+#: users/templates/registration/password_reset_complete.html:6
+msgid "Password reset complete"
+msgstr "Mot de passe réinitialisé"
+
+#: users/templates/registration/password_reset_confirm.html:6
+msgid "Confirm password reset"
+msgstr "Confirmer la réinitialisation du mot de passe"
+
+#: users/templates/registration/password_reset_form.html:6
+msgid "Send password reset link"
+msgstr "Envoyer le lien de réinitialisation du mot de passe"
+
+#: users/templates/registration/password_reset_form.html:11
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: users/templates/users/dashboard.html:9
+#, python-format
+msgid ""
+"\n"
+"Hello, %(user)s!\n"
+msgstr ""
+
+#: users/templates/users/dashboard.html:13
+msgid "Hello, guest!"
+msgstr "Bonjour, invité !"
+
+#: users/templates/users/dashboard.html:20
+msgid "Logout"
+msgstr "Déconnexion"

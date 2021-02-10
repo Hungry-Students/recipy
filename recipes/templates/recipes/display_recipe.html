@@ -1,20 +1,24 @@
+{% load i18n %}
+
 <h2>{{ recipe.name }}</h2>
 
-For {{ recipe.quantity }} {{ recipe.quantity_unit }}.<br>
+{% blocktrans with quantity=recipe.quantity unit=recipe.quantity_unit %}
+For {{ quantity }} {{ unit }}.<br>
+{% endblocktrans %}
 
-Cooking time: {{ recipe.cook_time }}.<br><br>
+{% trans "Cooking time:" %} {{ recipe.cook_time }}.<br><br>
 
 {% if recipe.diet %}
 {{ recipe.diet }}
 {% endif %}
 
-<h3>Ingredients</h3>
+<h3>{% trans "Ingredients" %}</h3>
 
 <table>
     <head>
         <tr>
-            <th>Quantity</th>
-            <th>Ingredient</th>
+            <th>{% trans "Quantity" %}</th>
+            <th>{% trans "Ingredients" %}</th>
         </tr>
     </head>
     <body>
@@ -27,6 +31,6 @@ Cooking time: {{ recipe.cook_time }}.<br><br>
     </body>
 </table>
 
-<h3>Recipe</h3>
+<h3>{% trans "Recipe" %}</h3>
 
 {{ recipe.instructions|linebreaks }}

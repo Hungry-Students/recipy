@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Browse recipes{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Browse recipes" %}{% endblock %}
 
 {% block content %}
 
-<h2>Latest recipes</h2>
+<h2>{% trans "Latest recipes" %}</h2>
 
 {% if latest_recipes_list %}
 <ul>
@@ -13,7 +15,7 @@
     {% endfor %}
 </ul>
 {% else %}
-<p>No recipes available 😢</p>
+<p>{% trans "No recipes available 😢" %}</p>
 {% endif %}
 
 {% endblock %}

@@ -3,6 +3,7 @@ import re
 from django.shortcuts import render
 from django.http import HttpResponseRedirect #, HttpResponse
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity #, RecipeCategory, RestrictedDiet
 from .parser import IngredientParser, YieldsParser
@@ -24,6 +25,7 @@ def detail_recipe(request, recipe_id):
 
 ### SUBMITTING RECIPES ###
 
+@login_required
 def write(request, error_message_link=None, error_message_form=None, existing_recipe=None):
     form = RecipeForm(initial = {'quantity_unit' : 'servings'})
     ingredient_list = Ingredient.objects.order_by('name')

@@ -1,6 +1,6 @@
-<!--users/templates/registration/login.html-->
-
 {% extends 'base.html' %}
+
+{% load i18n %}
 
 {% block content %}
 <h2>Login</h2>
@@ -8,9 +8,9 @@
 <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Login">
+    <input type="submit" value={% trans "Login" %}>
 </form>
 
-<a href="{% url 'users:dashboard' %}">Back to dashboard</a>
-<a href="{% url 'users:password_reset' %}">Reset password</a>
+<a href="{% url 'users:dashboard' %}">{% trans "Back to dashboard" %}</a>
+<a href="{% url 'users:password_reset' %}">{% trans "Reset password" %}</a>
 {% endblock %}
