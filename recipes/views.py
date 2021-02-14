@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect #, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
-from .models import Ingredient, Recipe, IngredientQuantity, RecipeCategory, RestrictedDiet
+from .models import Ingredient, Recipe, IngredientQuantity, RecipeCategory, RestrictedDiet, Comment
 from .parser import IngredientParser, YieldsParser
-from .forms import RecipeForm
+from .forms import RecipeForm, CommentForm
 
 def index(request):
     latest_recipes_list = Recipe.objects.order_by('-id')[:5]
@@ -18,8 +18,26 @@ def index(request):
 
 def detail_recipe(request, recipe_id):
     recipe = Recipe.objects.filter(id=recipe_id)[0]
+    comments = recipe.comments.all
+    new_comment = None
+    # Check whether a comment is being posted
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.recipe = recipe
+            new_comment.user = request.user
+            # Save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
     context = {
-        'recipe':recipe,
+        'recipe': recipe,
+        'comments': comments,
+        'new_comment': new_comment,
+        'comment_form': comment_form,
     }
     return render(request, 'recipes/detail_recipe.html', context)
 
@@ -115,8 +133,8 @@ def scrape(request):
     except WebsiteNotImplementedError:
         msg = 'the url '+ request.POST['url'] + ' is not supported by recipe_scraper'
         return write(request, error_message_link=msg)
-        
-        
+
+
 ### SEARCHING RECIPES ###
 def search(request):
 	ingredient_list = Ingredient.objects.order_by('name')
@@ -153,7 +171,7 @@ def search(request):
 					querry = querry.exclude(ingredients__name=ingredient_name)
 				else:
 					querry = querry.filter(ingredients__name=ingredient_name)
-					                
+
 		context = {
 			'ingredient_list' : ingredient_list,
 			'recipe_category_list' : recipe_category_list,

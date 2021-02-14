@@ -34,3 +34,35 @@ For {{ quantity }} {{ unit }}.<br>
 <h3>{% trans "Recipe" %}</h3>
 
 {{ recipe.instructions|linebreaks }}
+
+<div id="comments">
+    <h3>{% trans "Comments" %}</h3>
+    {% for comment in comments %}
+    <div class="comments" style="padding: 10px;">
+        <p class="font-weight-bold">
+            {{ comment.user }}
+            <span class=" text-muted font-weight-normal">
+                {{ comment.created_on }}
+            </span>
+        </p>
+        {{ comment.content | linebreaks }}
+    </div>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+    <div class="card-body">
+        {% if new_comment %}
+        <div class="alert alert-success" role="alert">
+            {% trans "Your comment was posted successfully" %}
+        </div>
+        {% else %}
+        <h3>{% trans "Leave a comment" %}</h3>
+        <form method="post" style="margin-top: 1.3em;">
+            {{ comment_form }}
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary  btn-lg">{% trans "Submit" %}</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>

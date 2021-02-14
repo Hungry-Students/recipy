@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from users.models import User
 
 # Create your models here.
 class Ingredient(models.Model):
@@ -27,7 +28,7 @@ class RestrictedDiet(models.Model):
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
     ingredients = models.ManyToManyField(Ingredient, through='IngredientQuantity')
-    
+
     #URL used to manage duplicatas
     url = models.CharField(max_length=400, blank=True, null=True)
 
@@ -44,11 +45,25 @@ class Recipe(models.Model):
         return self.name
 
 class IngredientQuantity(models.Model):
-	quantity = models.IntegerField(blank=True, null=True)
-	quantity_unit = models.CharField(max_length=200, blank=True, null=True)
+    quantity = models.IntegerField(blank=True, null=True)
+    quantity_unit = models.CharField(max_length=200, blank=True, null=True)
 
-	recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
-	ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
 
-	def __str__(self):
-		return str(self.recipe)+'/'+str(self.ingredient)
+    def __str__(self):
+        return str(self.recipe)+'/'+str(self.ingredient)
+
+
+
+class Comment(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete = models.CASCADE, related_name = 'comments')
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    content = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return self.content[:30]
