@@ -15,11 +15,11 @@ def cookbook(request):
                 'recipes': recipes,
                 'categories': categories,
                }
-    return render(request, 'cookbook.html', context)
+    return render(request, 'cookbook/cookbook.html', context)
 
 @login_required
 def entry(request, entry_id):
     context = { 'user': request.user }
     cur_entry = Entry.objects.filter(id=entry_id)[0]
     context['entry'] = cur_entry
-    return render(request, 'recipe.html', context)
+    return render(request, 'cookbook/recipe.html', context)
