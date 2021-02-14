@@ -15,7 +15,7 @@
 		<div>
 				{% trans "Error:" %} {{error_message_link}} <br>
 				{% if existing_recipe %}
-				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">
+				<a href="{% url 'recipes:recipe_detail' existing_recipe.id %}">
             {% trans "Link towards the recipe" %}
         </a><br>
 				{% endif %}
@@ -35,7 +35,7 @@
 				{% trans "Error:" %} {{error_message_link}} <br>
 
 				{% if existing_recipe %}
-				<a href="{% url 'recipes:detail_recipe' existing_recipe.id %}">
+				<a href="{% url 'recipes:recipe_detail' existing_recipe.id %}">
             {% trans "Link towards the recipe" %}
         </a><br>
 				{% endif %}

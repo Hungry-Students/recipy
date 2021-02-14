@@ -14,20 +14,20 @@
 <div id ="search">
 <form method="post" action="{% url 'recipes:search' %}">
 	{% csrf_token %}
-	
+
 	<datalist id= "ingredients_list">
 		<option value=""> None </option>
 		{% for ingredient in ingredient_list %}
 			<option value="{{ ingredient }}"> {{ ingredient }} </option>
 		{% endfor %}
 	</datalist>
-	
+
 	<table>
 		<tr>
 			<th>{% trans "Name:"%}</th>
 			<td> <input type="search" name="recipe_name" id="name" placeholder="Pizza"> </td>
 		</tr>
-		
+
 		<tr>
 			<th>{%trans "Type of recipe:"%}</th>
 			<td>
@@ -39,7 +39,7 @@
 				</select>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th>{% trans "Specify diet restrictions:" %}<th>
 			<td>
@@ -47,9 +47,9 @@
 					<input type="checkbox" id="diet_{{diet}}" name="diets" value="{{diet}}">
 					<label for="diet_{{diet}}">{{diet}}</label>
 				{% endfor %}
-			</td>			
+			</td>
 		</tr>
-	
+
 		<tr>
 			<th>{% trans "Ingredients:" %}</th>
 			<table id="ingredient_input">
@@ -62,7 +62,7 @@
 			</button>
 		<tr>
 	</table><br>
-	
+
 	<input type="submit" value={% trans "Search" %}>
 </form>
 </div>
@@ -73,7 +73,7 @@
 		{%if results%}
 			<ul>
 				{% for recipe in results %}
-				<li><a href="{% url 'recipes:detail_recipe' recipe.id %}">{{ recipe.name }}</a></li>
+				<li><a href="{% url 'recipes:recipe_detail' recipe.id %}">{{ recipe.name }}</a></li>
 				{% endfor %}
 			</ul>
 		{% else %}

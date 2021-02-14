@@ -16,7 +16,7 @@ def index(request):
     }
     return render(request, 'recipes/index.html', context)
 
-def detail_recipe(request, recipe_id):
+def recipe_detail(request, recipe_id):
     recipe = Recipe.objects.filter(id=recipe_id)[0]
     comments = recipe.comments.all
     new_comment = None
@@ -39,7 +39,7 @@ def detail_recipe(request, recipe_id):
         'new_comment': new_comment,
         'comment_form': comment_form,
     }
-    return render(request, 'recipes/detail_recipe.html', context)
+    return render(request, 'recipes/recipe_detail.html', context)
 
 ### SUBMITTING RECIPES ###
 
