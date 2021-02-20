@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from recipes.models import RecipeCategory
 from .models import User, Cookbook, Entry
 
-@login_required
-def cookbook(request):
-    user = request.user
+def cookbook(request, username):
+    user = get_object_or_404(User, username=username)
     recipes = user.cookbook.recipes.all()
     categories = {'Miscellaneous': recipes.filter(category=None)}
     for category in RecipeCategory.objects.all():
@@ -18,8 +17,14 @@ def cookbook(request):
     return render(request, 'cookbook/cookbook.html', context)
 
 @login_required
-def entry(request, entry_id):
-    context = { 'user': request.user }
-    cur_entry = Entry.objects.filter(id=entry_id)[0]
-    context['entry'] = cur_entry
+def my_cookbook(request):
+    username = request.user.username
+    return redirect('cookbook:cookbook', username=username)
+
+def entry(request, entry_id, username):
+    user = get_object_or_404(User, username=username)
+    cur_entry = get_object_or_404(Entry, id=entry_id)
+    context = { 'user': request.user,
+                'entry': cur_entry,
+               }
     return render(request, 'cookbook/recipe.html', context)
