@@ -61,15 +61,10 @@ def write(request, error_message_link=None, error_message_form=None, existing_re
 def handle_form(request):
     form = RecipeForm(request.POST)
     if form.is_valid():
-
-        #checking for duplicates of recipes, we don't really want that anymore (was more of a proof of concept)
-        """
-        temp = Recipe.objects.filter(name = form.cleaned_data['name'])
-        if temp:
-            return write(request, error_message_form = 'this recipe already exists', existing_recipe = temp[0])"""
-
+    	
         #extracting ingredients and checking for ingredient duplicates. Note : we do that before saving the recipe to avoid incomplete recipes.
         ingredient_names = {}
+        print('valid')
         for e in request.POST.keys():
             m = re.search('ingredient(?P<id>[0-9]+)_name', e)
             if m is not None:
@@ -84,17 +79,6 @@ def handle_form(request):
 
         r = form.save()
 
-        #Manage cook time
-        cook_time_hours = request.POST.get('cook_time_hours', 0)
-        if not cook_time_hours:
-            cook_time_hours = 0
-        cook_time_minutes = request.POST.get('cook_time_minutes', 0)
-        if not cook_time_minutes:
-            cook_time_minutes = 0
-
-        r.cook_time = 60*int(cook_time_hours)+int(cook_time_minutes)
-        r.save()
-
         #Parsing quantities and saving ingredients
         p = IngredientParser()
         for ingredient_id, ingredient_name in ingredient_names.items():
@@ -102,6 +86,7 @@ def handle_form(request):
             add_ingredient(r, ingredient_name, ingredient_quantity, ingredient_unit)
 
         return HttpResponseRedirect(reverse('recipes:index'))
+    print(form.errors)
     return write(request, error_message_form = 'Submitted an invalid form')
 
 ### SUBMITTING VIA RECIPE-SCRAPPER ###

@@ -32,7 +32,7 @@
 		<h2>{% trans "... Or write your own recipe" %}</h2>
 		{% if error_message_form %}
 		<div>
-				{% trans "Error:" %} {{error_message_link}} <br>
+				{% trans "Error:" %} {{error_message_form}} <br>
 
 				{% if existing_recipe %}
 				<a href="{% url 'recipes:recipe_detail' existing_recipe.id %}">
@@ -54,13 +54,6 @@
 						{% endfor %}
 				  </datalist>
 				  <tbody>
-				  		<tr>
-					  		  <th>{% trans "Cooking time:" %}</th>
-					  		  <td>
-						        <input type="number" id="cook_time_hours" name="cook_time_hours" min="0">h
-						        <input type="number" id="cook_time_minutes" name="cook_time_minutes" min="0">min
-						    </td>
-				  		</tr>
 				  		<tr>
 				  			  <th>{% trans "Ingredients:" %}</th>
 							    <table id="ingredient_input">
