@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from django import forms
+import re
 from django.forms import Form, Textarea, ModelForm
 from .models import Recipe, Ingredient, IngredientQuantity, RestrictedDiet, Comment, RecipeCategory
+from .parser import IngredientParser, YieldsParser
 
 class CustomNumberInput(forms.NumberInput):
 	def __init__(self, label, attrs=None):
@@ -32,6 +34,8 @@ class CookTimeWidget(forms.MultiWidget):
 			return [0,0]
 			
 class CookTimeField(forms.MultiValueField):
+	widget = CookTimeWidget
+	
 	def __init__(self, **kwargs):
 		fields = (forms.IntegerField(required=False, min_value=0), forms.IntegerField(required=False, min_value=0))
 		super().__init__(fields=fields, require_all_fields=False, **kwargs)
@@ -44,28 +48,81 @@ class CookTimeField(forms.MultiValueField):
 			r+=data_list[1]
 		return r
 
+class IngredientObject():
+	"""Used to easily work with all informations concerning 1 ingredient"""
+	def __init__(self, name='', quantity = None, quantity_unit=None, exclude=False):
+		self.name = name
+		self.quantity = quantity
+		self.quantity_unit = quantity_unit
+		self.exclude = exclude
+		
+	def format(self):
+		if self.quantity:
+			self.quantity = str(self.quantity)
+		return self
+		
+	def to_python(self):
+		if self.quantity:
+			self.quantity = int(self.quantity)
+		return self
+
+		
+class IngredientsWidget(forms.Widget):
+	template_name = 'recipes/ingredients_widget_template.html'
+	
+	def value_from_datadict(self, data, files, name):
+		return_list = []
+		print("extracting values")
+		for e in data.keys():
+			m = re.search(name+'_(?P<id>[0-9]+)_name', e)
+			if m is not None:
+				ingredient_id = m.group('id')
+				ingredient_name = data[e].lower() #note : we enforce lower case here for ingredient name
+			
+				p = IngredientParser()
+				quantity, quantity_unit = p.parse_quantity(data.get(name+'_'+ingredient_id+'_quantity', ''))
+			
+				exclude = bool(data.get(name+'_exclude_'+ingredient_id,None))
+			
+				return_list.append(IngredientObject(name=ingredient_name, quantity=quantity, quantity_unit=quantity_unit, exclude=exclude))
+		return return_list
+		
+	def format_value(self, value):
+		#We keep an object that will be handled by the template
+		if value:
+			return [ingredient.format() for ingredient in value]
+		return [IngredientObject]
+		
+		
+class IngredientsField(forms.Field):
+
+	widget = IngredientsWidget
+	def __init__(self, empty_value=None, **kwargs):
+		self.empty_value=empty_value
+		super().__init__(**kwargs)
+		
+	def to_python(self, value):
+		if value is not None:
+			return [ingredient.to_python() for ingredient in value]
+		else:
+ 			return []
+		
+	def widget_attrs(self, widget):
+		#Doesn't work for now :/
+		return {'ingredient_list' :  Ingredient.objects.order_by('name')}
+				
+
 
 class RecipeForm(Form):
 	name = forms.CharField(label = 'Name')
 	category = forms.ModelChoiceField(RecipeCategory.objects.all(), label = 'Category', required=False)
 	quantity = forms.IntegerField(min_value=1, label = 'Yield')
 	quantity_unit = forms.CharField(label = 'Yield unit', initial='Servings')
-	cook_time = CookTimeField(widget = CookTimeWidget)
+	cook_time = CookTimeField()
 	diets = forms.ModelMultipleChoiceField(RestrictedDiet.objects.all(), label = 'Diets', widget = forms.CheckboxSelectMultiple)
 	instructions = forms.CharField(label = 'Instructions', widget = Textarea(attrs={'cols': 80, 'rows': 20}))
-
-	'''
-	class Meta:
-		model = Recipe
-		fields = ['name', 'category', 'quantity', 'quantity_unit', 'cook_time', 'diets', 'instructions']
-		field_classes = {
-			#'cook_time' : CookTimeField
-		}
-		widgets = {
-		    'instructions': Textarea(attrs={'cols': 80, 'rows': 20}),
-		    'diets' : forms.CheckboxSelectMultiple,
-		}
-	'''
+	ingredients = IngredientsField(label='Machin', required=False)
+	
 	def save(self):
 		#building new recipe
 		r = Recipe()
@@ -79,6 +136,10 @@ class RecipeForm(Form):
 
 		for diet in self.cleaned_data['diets']:
 		    r.diets.add(diet)
+		
+		print(self.cleaned_data['ingredients'])
+		for ingredient in self.cleaned_data['ingredients']:
+			add_ingredient(r, ingredient.name, ingredient.quantity, ingredient.quantity_unit)
 
 		return r
 
@@ -94,3 +155,21 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+        
+        
+def add_ingredient(recipe, ingredient_name, ingredient_quantity, ingredient_quantity_unit):
+    #Fetching or creating ingredient
+    possible_ing_obj = Ingredient.objects.filter(name = ingredient_name)
+    if possible_ing_obj :
+        ingredient_object = possible_ing_obj[0]
+    else :
+        ingredient_object = Ingredient(name = ingredient_name)
+        ingredient_object.save()
+
+    #Building relation to recipe
+    relation = IngredientQuantity(recipe = recipe,
+                                  ingredient = ingredient_object,
+                                  quantity = ingredient_quantity,
+                                  quantity_unit = ingredient_quantity_unit
+                                  )
+    relation.save()

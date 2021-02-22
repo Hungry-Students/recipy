@@ -1,0 +1,25 @@
+{% load i18n %}
+
+{% load static %}
+<script src="{% static 'recipes/ingredient_form_script.js' %}"></script>
+
+<datalist id= "{{widget.name}}_ingredients_list">
+    <option value=""> None </option>
+	{% for ingredient in widget.ingredient_list %}
+		<option value="{{ ingredient }}"> {{ ingredient }} </option>
+	{% endfor %}
+</datalist>
+<tbody>
+	<tr>
+		    <table id="{{widget.name}}_ingredient_input">
+			      <script> addIngredient('{{widget.name}}') </script>
+		    </table>
+    </tr>
+    <tr>
+		<button type="button" onclick=addIngredient('{{widget.name}}')>
+	        {% trans "Add ingredient" %}
+	    </button>
+    <tr>
+</tbody>
+
+

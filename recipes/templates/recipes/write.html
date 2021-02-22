@@ -47,7 +47,13 @@
 		    <table>
 		        {{ form.as_table }}
 
-			      <datalist id= "ingredients_list">
+			     
+				</table><br>
+		    <input type="submit" value={% trans "Submit my recipe" %}>
+		</form>
+</div>
+<!--
+ <datalist id= "ingredients_list">
 					    <option value=""> None </option>
 						{% for ingredient in ingredient_list %}
 							<option value="{{ ingredient }}"> {{ ingredient }} </option>
@@ -65,10 +71,5 @@
 						        {% trans "Add ingredient" %}
 						    </button>
 					    <tr>
-					</tbody>
-				</table><br>
-		    <input type="submit" value={% trans "Submit my recipe" %}>
-		</form>
-</div>
-
+					</tbody>-->
 {% endblock %}

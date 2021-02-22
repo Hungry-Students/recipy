@@ -46,13 +46,11 @@ def recipe_detail(request, recipe_id):
 @login_required
 def write(request, error_message_link=None, error_message_form=None, existing_recipe=None):
     form = RecipeForm(initial = {'quantity_unit' : 'servings'})
-    ingredient_list = Ingredient.objects.order_by('name')
     context = {
         'error_message_link' : error_message_link,
         'error_message_form' : error_message_form,
         'existing_recipe' : existing_recipe,
         'form' : form,
-        'ingredient_list' : ingredient_list,
     }
     return render(request , 'recipes/write.html', context)
 
@@ -61,32 +59,8 @@ def write(request, error_message_link=None, error_message_form=None, existing_re
 def handle_form(request):
     form = RecipeForm(request.POST)
     if form.is_valid():
-    	
-        #extracting ingredients and checking for ingredient duplicates. Note : we do that before saving the recipe to avoid incomplete recipes.
-        ingredient_names = {}
-        print('valid')
-        for e in request.POST.keys():
-            m = re.search('ingredient(?P<id>[0-9]+)_name', e)
-            if m is not None:
-                ingredient_id = m.group('id')
-                ingredient_name = request.POST[e]
-                if ingredient_name == '':
-                    continue
-                ingredient_name = ingredient_name.lower() #note : we enforce lower case here for ingredient name
-                if ingredient_name in ingredient_names.values():
-                    return write(request, error_message_form = 'You have listed ingredient '+ingredient_name+' several times')
-                ingredient_names[ingredient_id] = ingredient_name
-
-        r = form.save()
-
-        #Parsing quantities and saving ingredients
-        p = IngredientParser()
-        for ingredient_id, ingredient_name in ingredient_names.items():
-            ingredient_quantity, ingredient_unit = p.parse_quantity(request.POST.get('ingredient'+ingredient_id+'_quantity', ''))
-            add_ingredient(r, ingredient_name, ingredient_quantity, ingredient_unit)
-
-        return HttpResponseRedirect(reverse('recipes:index'))
-    print(form.errors)
+    	form.save()
+    	return HttpResponseRedirect(reverse('recipes:index'))
     return write(request, error_message_form = 'Submitted an invalid form')
 
 ### SUBMITTING VIA RECIPE-SCRAPPER ###
