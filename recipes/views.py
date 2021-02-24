@@ -61,6 +61,7 @@ def handle_form(request):
     if form.is_valid():
     	form.save()
     	return HttpResponseRedirect(reverse('recipes:index'))
+    print(form.errors)
     return write(request, error_message_form = 'Submitted an invalid form')
 
 ### SUBMITTING VIA RECIPE-SCRAPPER ###
