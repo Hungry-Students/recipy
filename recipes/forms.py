@@ -100,8 +100,9 @@ class IngredientsWidget(forms.Widget):
 		
 class IngredientsField(forms.Field):
 	widget = IngredientsWidget
-	def __init__(self, empty_value=None, **kwargs):
+	def __init__(self, empty_value=None, display_type = 0, **kwargs):
 		self.empty_value=empty_value
+		self.display_type = display_type #can be 0 for input, or 1 for search
 		super().__init__(**kwargs)
 		
 	def to_python(self, value):
@@ -111,8 +112,7 @@ class IngredientsField(forms.Field):
  			return []
 		
 	def widget_attrs(self, widget):
-		#Doesn't work for now :/
-		return {'ingredient_list' :  Ingredient.objects.order_by('name')}
+		return {'ingredient_list' :  Ingredient.objects.order_by('name'), 'display_type' : self.display_type}
 		
 def validate_no_duplicate(value_list):
 	l=[]
@@ -131,21 +131,22 @@ def validate_non_empty_name(value_list):
 		        _('You have included an ingredient without name'),
 		        params={},
 		    )
-				
 
 
-class RecipeForm(Form):
-	name = forms.CharField(label = 'Name')
-	category = forms.ModelChoiceField(RecipeCategory.objects.all(), label = 'Category', required=False)
+class InputRecipeForm(Form):
+	""" A form designed for recipe input, i.e. new recipes or modification of existing recipes"""
+
+	name = forms.CharField(label = 'Name', required=True)
 	quantity = forms.IntegerField(min_value=1, label = 'Yield')
-	quantity_unit = forms.CharField(label = 'Yield unit', initial='Servings')
+	quantity_unit = forms.CharField(label = 'Yield unit', initial='Servings')	
+	category = forms.ModelChoiceField(RecipeCategory.objects.all(), label = 'Category', required=True)
 	cook_time = CookTimeField(required=False)
 	diets = forms.ModelMultipleChoiceField(RestrictedDiet.objects.all(), label = 'Diets', widget = forms.CheckboxSelectMultiple, required=False)
 	instructions = forms.CharField(label = 'Instructions', widget = Textarea(attrs={'cols': 80, 'rows': 20}))
-	ingredients = IngredientsField(label='Ingredients', required=False, validators = [validate_no_duplicate, validate_non_empty_name])
+	ingredients = IngredientsField(label='Ingredients', required=False, display_type = 0, validators = [validate_no_duplicate, validate_non_empty_name])
 	
 	def save(self):
-		#building new recipe
+		"""builds a new recipe and saves it to DB. TODO : manage cookbook links, if recipe is modified manage possible deletion of former recipe"""
 		r = Recipe()
 		r.name = self.cleaned_data['name']
 		r.instructions = self.cleaned_data['instructions']
@@ -161,6 +162,12 @@ class RecipeForm(Form):
 			add_ingredient(r, ingredient.name, ingredient.quantity, ingredient.quantity_unit)
 
 		return r
+		
+class SearchRecipeForm(Form):
+	name = forms.CharField(label = 'Name', required=False)
+	category = forms.ModelChoiceField(RecipeCategory.objects.all(), label = 'Category', required=False)
+	diets = forms.ModelMultipleChoiceField(RestrictedDiet.objects.all(), label = 'Diets', widget = forms.CheckboxSelectMultiple, required=False)
+	ingredients = IngredientsField(label='Ingredients', required=False, display_type = 1, validators = [validate_no_duplicate, validate_non_empty_name])
 
 
 class CommentForm(forms.ModelForm):

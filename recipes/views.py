@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity, RecipeCategory, RestrictedDiet, Comment
 from .parser import IngredientParser, YieldsParser
-from .forms import RecipeForm, CommentForm
+from .forms import InputRecipeForm, CommentForm
 
 def index(request):
     latest_recipes_list = Recipe.objects.order_by('-id')[:5]
@@ -45,7 +45,7 @@ def recipe_detail(request, recipe_id):
 
 @login_required
 def write(request, error_message_link=None, error_message_form=None, existing_recipe=None):
-    form = RecipeForm(initial = {'quantity_unit' : 'servings'})
+    form = InputRecipeForm(initial = {'quantity_unit' : 'servings'})
     context = {
         'error_message_link' : error_message_link,
         'error_message_form' : error_message_form,
@@ -57,7 +57,7 @@ def write(request, error_message_link=None, error_message_form=None, existing_re
 ### SUBMITTING VIA A FORM ###
 
 def handle_form(request):
-    form = RecipeForm(request.POST)
+    form = InputRecipeForm(request.POST)
     if form.is_valid():
     	form.save()
     	return HttpResponseRedirect(reverse('recipes:index'))

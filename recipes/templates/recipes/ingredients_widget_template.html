@@ -5,18 +5,18 @@
 
 <datalist id= "{{widget.name}}_ingredients_list">
     <option value=""> None </option>
-	{% for ingredient in widget.ingredient_list %}
+	{% for ingredient in widget.attrs.ingredient_list %}
 		<option value="{{ ingredient }}"> {{ ingredient }} </option>
 	{% endfor %}
 </datalist>
 <tbody>
 	<tr>
 		    <table id="{{widget.name}}_ingredient_input">
-			      <script> addIngredient('{{widget.name}}') </script>
+			      <script> addIngredient('{{widget.name}}',{{widget.attrs.display_type}}) </script>
 		    </table>
     </tr>
     <tr>
-		<button type="button" onclick=addIngredient('{{widget.name}}')>
+		<button type="button" onclick=addIngredient('{{widget.name}}',{{widget.attrs.display_type}})>
 	        {% trans "Add ingredient" %}
 	    </button>
     <tr>
