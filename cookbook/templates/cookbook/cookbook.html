@@ -6,6 +6,8 @@
 
 {% block content %}
 
+<p>{% include 'users/snippets/follow_form.html' with username=user.username is_following=is_following %}</p>
+
 {% for category, recipes in categories.items %}
 <h2>{{ category}}</h2>
 <ul>

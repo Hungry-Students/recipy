@@ -1,0 +1,13 @@
+{% if request.user.is_authenticated %}
+<form class="form"
+      method="Post"
+      action="{% url 'users:follow' %}?next={{ request.path }}">
+    {% csrf_token %}
+    <input type="hidden"
+           name="user_to_toggle"
+           value="{% if username %}{{ username }}{% endif %}"/>
+    <button class="btn {% if is_following %}btn-default{% else %}btn-primary{% endif %}">
+        {% if is_following %}Unfollow{% else %}Follow{% endif %}
+    </button>
+</form>
+{% endif %}

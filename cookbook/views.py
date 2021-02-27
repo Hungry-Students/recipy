@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from recipes.models import RecipeCategory
+from users.utils import is_following
 from .models import User, Cookbook, Entry
 
 def cookbook(request, username):
@@ -10,9 +11,11 @@ def cookbook(request, username):
     categories = {'Miscellaneous': recipes.filter(category=None)}
     for category in RecipeCategory.objects.all():
         categories[category.name] = recipes.filter(category=category)
+    is_following_ = is_following(request.user, user)
     context = { 'user': user,
                 'recipes': recipes,
                 'categories': categories,
+                'is_following': is_following_,
                }
     return render(request, 'cookbook/cookbook.html', context)
 
