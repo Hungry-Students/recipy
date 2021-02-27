@@ -14,8 +14,7 @@ class Cookbook(models.Model):
     recipes = models.ManyToManyField(Recipe, through='Entry')
 
     def __str__(self):
-        possesive = '' if self.owner.username[-1] == 's' else 's'
-        return _("%name'%possessive cookbook" % {'name':self.owner.username, 'possessive':possesive})
+        return str(self.owner)
 
 class Entry(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
