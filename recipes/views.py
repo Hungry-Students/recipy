@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from recipe_scrapers import scrape_me, WebsiteNotImplementedError
 from .models import Ingredient, Recipe, IngredientQuantity, RecipeCategory, RestrictedDiet, Comment
 from .parser import IngredientParser, YieldsParser
-from .forms import InputRecipeForm, CommentForm
+from .forms import InputRecipeForm, SearchRecipeForm, CommentForm
 
 def index(request):
     latest_recipes_list = Recipe.objects.order_by('-id')[:5]
@@ -97,49 +97,26 @@ def scrape(request):
 
 ### SEARCHING RECIPES ###
 def search(request):
-	ingredient_list = Ingredient.objects.order_by('name')
-	recipe_category_list = RecipeCategory.objects.all()
-	diet_list = RestrictedDiet.objects.all()
 	if request.method == 'GET':
+		form = SearchRecipeForm()
 		context = {
-			'ingredient_list' : ingredient_list,
-			'recipe_category_list' : recipe_category_list,
-			'diet_list' : diet_list,
+			'form' : form,
 			'results' : None,
 			'has_results': False,
 		}
 		return render(request , 'recipes/search.html', context)
 	else:
-		#filtering name
-		querry = Recipe.objects.filter(name__icontains = request.POST['recipe_name'])
-		#filtering category
-		if request.POST['recipe_category']:
-			querry = querry.filter(category__name = request.POST['recipe_category'])
-		#filtering diet
-		for diet in request.POST.getlist('diets'):
-			querry = querry.filter(diets__name=diet)
-		#filtering ingredients
-		for e in request.POST.keys():
-			m = re.search('ingredient(?P<id>[0-9]+)_name', e)
-			if m is not None:
-				ingredient_id = m.group('id')
-				ingredient_name = request.POST[e]
-				if ingredient_name == '':
-					continue
-				ingredient_name = ingredient_name.lower() #note : ingredients are stored using lowercase
-				if request.POST.get('exclude_'+ingredient_id,None):
-					querry = querry.exclude(ingredients__name=ingredient_name)
-				else:
-					querry = querry.filter(ingredients__name=ingredient_name)
-
-		context = {
-			'ingredient_list' : ingredient_list,
-			'recipe_category_list' : recipe_category_list,
-			'diet_list' : diet_list,
-			'results' : querry,
-			'has_results': True,
-		}
-		return render(request , 'recipes/search.html', context)
+		form = SearchRecipeForm(request.POST)
+		if form.is_valid():
+			query = form.search()
+			context = {
+				'form' : form,
+				'results' : query,
+				'has_results': True,
+			}
+			return render(request , 'recipes/search.html', context) #TODO : look at how we can use a redirection for this.
+		print(form.errors)
+		return write(request, error_message_form = 'Submitted an invalid form')
 
 ### Non view functions ###
 

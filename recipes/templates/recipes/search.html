@@ -14,7 +14,10 @@
 <div id ="search">
 <form method="post" action="{% url 'recipes:search' %}">
 	{% csrf_token %}
-
+	<table>
+	{{form.as_table}}
+	</table> <br>
+	<!--
 	<datalist id= "ingredients_list">
 		<option value=""> None </option>
 		{% for ingredient in ingredient_list %}
@@ -61,7 +64,7 @@
 			    {% trans "Add ingredient" %}
 			</button>
 		<tr>
-	</table><br>
+	</table><br> -->
 
 	<input type="submit" value={% trans "Search" %}>
 </form>

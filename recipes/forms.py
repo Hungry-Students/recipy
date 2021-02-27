@@ -167,7 +167,24 @@ class SearchRecipeForm(Form):
 	name = forms.CharField(label = 'Name', required=False)
 	category = forms.ModelChoiceField(RecipeCategory.objects.all(), label = 'Category', required=False)
 	diets = forms.ModelMultipleChoiceField(RestrictedDiet.objects.all(), label = 'Diets', widget = forms.CheckboxSelectMultiple, required=False)
-	ingredients = IngredientsField(label='Ingredients', required=False, display_type = 1, validators = [validate_no_duplicate, validate_non_empty_name])
+	ingredients = IngredientsField(label='Ingredients', required=False, display_type = 1, validators = [validate_no_duplicate])
+	
+	def search(self):
+		#filtering name
+		query = Recipe.objects.filter(name__icontains = self.cleaned_data['name'])
+		#filtering category
+		if self.cleaned_data['category']:
+			query = query.filter(category__name = self.cleaned_data['category'])
+		#filtering diet
+		for diet in self.cleaned_data['diets']:
+			query = query.filter(diets__name=diet)
+		#filtering ingredients
+		for ingredient in self.cleaned_data['ingredients']:
+			if ingredient.exclude:
+				query = query.exclude(ingredients__name=ingredient.name)
+			else:
+				query = query.filter(ingredients__name=ingredient.name)
+		return query
 
 
 class CommentForm(forms.ModelForm):
