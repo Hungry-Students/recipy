@@ -109,6 +109,7 @@ def search(request):
 		form = SearchRecipeForm(request.POST)
 		if form.is_valid():
 			query = form.search()
+			form = SearchRecipeForm(initial = form.cleaned_data)
 			context = {
 				'form' : form,
 				'results' : query,

@@ -25,8 +25,9 @@ class CookTimeWidget(forms.MultiWidget):
 		super().__init__(widgets, attrs)
 	
 	def render(self, name, value, attrs = None ,renderer=None):
-		hours_render = self.widgets[0].render(name+'_hours', value, attrs, renderer)
-		minutes_render = self.widgets[1].render(name+'_minutes', value, attrs, renderer)
+		subvalues = self.decompress(value)
+		hours_render = self.widgets[0].render(name+'_hours', subvalues[0], attrs, renderer)
+		minutes_render = self.widgets[1].render(name+'_minutes', subvalues[1], attrs, renderer)
 		return hours_render+minutes_render
 		
 	def decompress(self, value):
@@ -60,15 +61,24 @@ class IngredientObject():
 		self.quantity_unit = quantity_unit
 		self.exclude = exclude
 		
-	def format(self):
-		if self.quantity:
-			self.quantity = str(self.quantity)
-		return self
+		self.quantity_formatted = ''
+		self.exclude_formatted = ''
+		self.format()
 		
-	def to_python(self):
+		
+	def format(self):
+		#updates the _format values assuming python values may have been changed
+		self.quantity_formatted = ''
 		if self.quantity:
-			self.quantity = int(self.quantity)
+			self.quantity_formatted += str(self.quantity)
+		if self.quantity_unit:
+			self.quantity_formatted += str(self.quantity_unit)
+		if self.exclude:
+			self.exclude_formatted = 'checked'
+		else:
+			self.exclude_formatted = ''
 		return self
+
 
 		
 class IngredientsWidget(forms.Widget):
@@ -82,6 +92,7 @@ class IngredientsWidget(forms.Widget):
 			if m is not None:
 				ingredient_id = m.group('id')
 				ingredient_name = data[e].lower() #note : we enforce lower case here for ingredient name
+				#Note : we keep ingredient even if name is empty, in part for validators to check for errors in the form, so future implementation must be defensive of this fact.
 			
 				p = IngredientParser()
 				quantity, quantity_unit = p.parse_quantity(data.get(name+'_'+ingredient_id+'_quantity', ''))
@@ -95,7 +106,7 @@ class IngredientsWidget(forms.Widget):
 		#We keep an object that will be handled by the template
 		if value:
 			return [ingredient.format() for ingredient in value]
-		return [IngredientObject()]
+		return [IngredientObject()] #If no initial value is provided, add an empty input spot
 		
 		
 class IngredientsField(forms.Field):
@@ -107,7 +118,7 @@ class IngredientsField(forms.Field):
 		
 	def to_python(self, value):
 		if value is not None:
-			return [ingredient.to_python() for ingredient in value]
+			return value #we already have python values
 		else:
  			return []
 		
@@ -159,7 +170,8 @@ class InputRecipeForm(Form):
 		    r.diets.add(diet)
 		
 		for ingredient in self.cleaned_data['ingredients']:
-			add_ingredient(r, ingredient.name, ingredient.quantity, ingredient.quantity_unit)
+			if ingredient.name: #do not save empty ingredients.
+				add_ingredient(r, ingredient.name, ingredient.quantity, ingredient.quantity_unit)
 
 		return r
 		
@@ -180,10 +192,11 @@ class SearchRecipeForm(Form):
 			query = query.filter(diets__name=diet)
 		#filtering ingredients
 		for ingredient in self.cleaned_data['ingredients']:
-			if ingredient.exclude:
-				query = query.exclude(ingredients__name=ingredient.name)
-			else:
-				query = query.filter(ingredients__name=ingredient.name)
+			if ingredient.name: #we don't filter for empty inputs
+				if ingredient.exclude:
+					query = query.exclude(ingredients__name=ingredient.name)
+				else:
+					query = query.filter(ingredients__name=ingredient.name)
 		return query
 
 

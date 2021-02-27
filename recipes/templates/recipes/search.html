@@ -17,54 +17,6 @@
 	<table>
 	{{form.as_table}}
 	</table> <br>
-	<!--
-	<datalist id= "ingredients_list">
-		<option value=""> None </option>
-		{% for ingredient in ingredient_list %}
-			<option value="{{ ingredient }}"> {{ ingredient }} </option>
-		{% endfor %}
-	</datalist>
-
-	<table>
-		<tr>
-			<th>{% trans "Name:"%}</th>
-			<td> <input type="search" name="recipe_name" id="name" placeholder="Pizza"> </td>
-		</tr>
-
-		<tr>
-			<th>{%trans "Type of recipe:"%}</th>
-			<td>
-				<select name="recipe_category" id="recipe_category">
-					<option value="">-----</option>
-					{% for category in recipe_category_list %}
-						<option value="{{ category }}"> {{ category }} </option>
-					{% endfor %}
-				</select>
-			</td>
-		</tr>
-
-		<tr>
-			<th>{% trans "Specify diet restrictions:" %}<th>
-			<td>
-				{% for diet in diet_list %}
-					<input type="checkbox" id="diet_{{diet}}" name="diets" value="{{diet}}">
-					<label for="diet_{{diet}}">{{diet}}</label>
-				{% endfor %}
-			</td>
-		</tr>
-
-		<tr>
-			<th>{% trans "Ingredients:" %}</th>
-			<table id="ingredient_input">
-				  <script> addIngredient() </script>
-			</table>
-	    </tr>
-	    <tr>
-			<button type="button" onclick=addIngredient()>
-			    {% trans "Add ingredient" %}
-			</button>
-		<tr>
-	</table><br> -->
 
 	<input type="submit" value={% trans "Search" %}>
 </form>

@@ -12,7 +12,9 @@
 <tbody>
 	<tr>
 		    <table id="{{widget.name}}_ingredient_input">
-			      <script> addIngredient('{{widget.name}}',{{widget.attrs.display_type}}) </script>
+		    	{% for ingredient in widget.value %}
+			    <script> addIngredient('{{widget.name}}',{{widget.attrs.display_type}},'{{ingredient.name}}','{{ingredient.quantity_formatted}}','{{ingredient.exclude_formatted}}') </script>
+			    {% endfor %}
 		    </table>
     </tr>
     <tr>
