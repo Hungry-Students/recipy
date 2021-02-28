@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
+from .models import (
+    Comment,
+    Ingredient,
+    IngredientQuantity,
+    Recipe,
+    RecipeCategory,
+    RestrictedDiet,
+)
+
 # Register your models here.
 
-from.models import Ingredient, Recipe, RecipeCategory, RestrictedDiet, IngredientQuantity, Comment
 
 admin.site.register(Ingredient)
 admin.site.register(Recipe)
