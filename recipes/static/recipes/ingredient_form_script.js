@@ -24,7 +24,7 @@ function addIngredient(name, display_type, value_name='', value_quantity='', val
 					</td>
 					`
 	}
-	tr_node.innerHTML = 
+	tr_node.innerHTML =
 	`<td>Name</td>
 	<td>
 		<input list="${name}_ingredients_list" id="${name}_${ingredient_counter}_name" name="${name}_${ingredient_counter}_name" value="${value_name}">
@@ -34,4 +34,3 @@ function addIngredient(name, display_type, value_name='', value_quantity='', val
 	tr_node.id = `${name}_${ingredient_counter}_input`;
 	document.getElementById(`${name}_ingredient_input`).appendChild(tr_node);
 }
-
