@@ -40,8 +40,11 @@ To run the site locally, simply type
 License
 -------
 
-Portions of project Recipy are copyright (C) 2020 [TWal](https://twal.org/) for
+Portions of project ReciPy are copyright (C) 2020 [TWal](https://twal.org/) for
 project [miam](https://github.com/TWal/miam).
+Portions of project ReciPy are copyright (C) 2017 [Romain
+Gauthier](https://github.com/tOkeshu) for project
+[activitypub-example](https://github.com/tOkeshu/activitypub-example).
 All other copyright for project Recipy is (C) 2020-2021 Axel Kugelman & Jules
 Saget.
 
