@@ -4,7 +4,6 @@ from django.db import models
 from users.models import User
 
 
-# Create your models here.
 class Ingredient(models.Model):
     name = models.CharField(max_length=200)
 
@@ -73,3 +72,24 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.content)[:30]
+
+
+class Cookbook(models.Model):
+    owner = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="cookbook",
+    )
+    recipes = models.ManyToManyField(Recipe, through="Entry")
+
+    def __str__(self):
+        return str(self.owner)
+
+
+class Entry(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    cookbook = models.ForeignKey(Cookbook, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.recipe.name

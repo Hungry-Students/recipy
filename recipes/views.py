@@ -3,12 +3,15 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect  # , HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from recipe_scrapers import WebsiteNotImplementedError, scrape_me
 
+from users.models import User
+from users.utils import is_following
+
 from .forms import CommentForm, InputRecipeForm, SearchRecipeForm
-from .models import Ingredient, IngredientQuantity, Recipe
+from .models import Entry, Ingredient, IngredientQuantity, Recipe, RecipeCategory
 from .parser import IngredientParser, YieldsParser
 
 
@@ -44,6 +47,50 @@ def recipe_detail(request, recipe_id):
         "comment_form": comment_form,
     }
     return render(request, "recipes/recipe_detail.html", context)
+
+
+# COOKBOOKS
+
+
+def cookbook(request, username):
+    """
+    Shows the cookbook of user "username"
+    """
+    user = get_object_or_404(User, username=username)
+    recipes = user.cookbook.recipes.all()
+    categories = {"Miscellaneous": recipes.filter(category=None)}
+    for category in RecipeCategory.objects.all():
+        categories[category.name] = recipes.filter(category=category)
+    is_following_ = is_following(request.user, user)
+    context = {
+        "user": user,
+        "recipes": recipes,
+        "categories": categories,
+        "is_following": is_following_,
+    }
+    return render(request, "recipes/cookbook/cookbook.html", context)
+
+
+@login_required
+def my_cookbook(request):
+    """
+    Show the cookbook of request.user
+    """
+    username = request.user.username
+    return redirect("recipes:cookbook", username=username)
+
+
+def entry(request, entry_id, username):
+    """
+    Show the entry (=recipe) "entry_id" in user "username"'s cookbook
+    """
+    user = get_object_or_404(User, username=username)
+    cur_entry = get_object_or_404(Entry, id=entry_id)
+    context = {
+        "user": user,
+        "entry": cur_entry,
+    }
+    return render(request, "recipes/cookbook/recipe.html", context)
 
 
 # SUBMITTING RECIPES

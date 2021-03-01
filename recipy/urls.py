@@ -21,6 +21,5 @@ urlpatterns = [
     path("", include("users.urls")),
     path("admin/", admin.site.urls),
     path("recipes/", include("recipes.urls")),
-    path("cookbook/", include("cookbook.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
 ]
