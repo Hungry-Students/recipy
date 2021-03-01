@@ -6,7 +6,7 @@ disable="""
     line-too-long,
     duplicate-code,
     import-error,
-    unused_variable,
+    unused-argument,
     no-self-use,
     import-outside-toplevel,
     fixme,

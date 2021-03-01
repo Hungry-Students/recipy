@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
-from users.models import User
+from users.models import URIs, User, uri
 
 
 class Ingredient(models.Model):
@@ -88,8 +88,33 @@ class Cookbook(models.Model):
 
 
 class Entry(models.Model):
+    # Corresponds to the Document object type of Activity Streams
+    # https://www.w3.org/ns/activitystreams#Document
+    ap_id = models.TextField(null=True)
+    remote = models.BooleanField(default=False)
+
     recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
     cookbook = models.ForeignKey(Cookbook, on_delete=models.CASCADE)
+
+    @property
+    def uris(self):
+        if self.remote:
+            ap_id = self.ap_id
+        else:
+            ap_id = uri("cookbook-recipe", self.cookbook.owner, self.id)
+        return URIs(id=ap_id)
+
+    def to_activitystream(self):
+        """
+        Dumps the data of self in a JSON activity stream vocabulary compliant format
+        """
+        return {
+            "type": "Document",
+            "id": self.uris.id,
+            "name": str(self.recipe),
+            "actor": self.cookbook.owner.to_activitystream,
+            "url": self.uris.id,
+        }
 
     def __str__(self):
         return self.recipe.name
