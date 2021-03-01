@@ -8,30 +8,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activitypub', '0003_note'),
+        ("activitypub", "0003_note"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='actor_id',
-            field=models.TextField(default='default'),
+            model_name="person",
+            name="actor_id",
+            field=models.TextField(default="default"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='person',
-            name='following',
-            field=models.ManyToManyField(related_name='followers', to='activitypub.Person'),
+            model_name="person",
+            name="following",
+            field=models.ManyToManyField(
+                related_name="followers", to="activitypub.Person"
+            ),
         ),
         migrations.AddField(
-            model_name='person',
-            name='remote',
+            model_name="person",
+            name="remote",
             field=models.BooleanField(default=False),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='person',
-            name='username',
+            model_name="person",
+            name="username",
             field=models.CharField(max_length=100),
         ),
     ]

@@ -8,28 +8,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activitypub', '0005_auto_20170720_1142'),
+        ("activitypub", "0005_auto_20170720_1142"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='note',
-            name='ap_id',
+            model_name="note",
+            name="ap_id",
             field=models.TextField(null=True),
         ),
         migrations.AlterField(
-            model_name='note',
-            name='remote',
+            model_name="note",
+            name="remote",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='person',
-            name='ap_id',
+            model_name="person",
+            name="ap_id",
             field=models.TextField(null=True),
         ),
         migrations.AlterField(
-            model_name='person',
-            name='remote',
+            model_name="person",
+            name="remote",
             field=models.BooleanField(default=False),
         ),
     ]

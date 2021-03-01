@@ -1,34 +1,42 @@
-from urllib.parse import urlparse
 import json
-import requests
+from urllib.parse import urlparse
 
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
-from django.http import JsonResponse
-from django.urls import reverse
+import requests
+from django.http import (
+    HttpResponse,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from activitypub.models import Person, Note, Activity
 from activitypub import activities
 from activitypub.activities import as_activitystream
+from activitypub.models import Activity, Note, Person
+
 
 def noop(*args, **kwargs):
     pass
+
 
 def person(request, username):
     person = get_object_or_404(Person, username=username)
     return JsonResponse(activities.Person(person).to_json(context=True))
 
+
 def note(request, username, note_id):
     note = get_object_or_404(Note, pk=note_id)
     return JsonResponse(activities.Note(note).to_json(context=True))
+
 
 @csrf_exempt
 def outbox(request, username):
     person = get_object_or_404(Person, username=username)
 
     if request.method == "GET":
-        objects = person.activities.filter(remote=False).order_by('-created_at')
+        objects = person.activities.filter(remote=False).order_by("-created_at")
         collection = activities.OrderedCollection(objects)
         return JsonResponse(collection.to_json(context=True))
 
@@ -38,9 +46,7 @@ def outbox(request, username):
     if activity.type == "Note":
         obj = activity
         activity = activities.Create(
-            to=person.uris.followers,
-            actor=person.uris.id,
-            object=obj
+            to=person.uris.followers, actor=person.uris.id, object=obj
         )
 
     activity.validate()
@@ -50,7 +56,7 @@ def outbox(request, username):
             raise Exception("Sorry, you can only create Notes objects")
 
         content = activity.object.content
-        note    = Note(content=content, person=person)
+        note = Note(content=content, person=person)
         note.save()
 
         # TODO: check for actor being the right actor object
@@ -71,17 +77,19 @@ def outbox(request, username):
         activity.to = followed.uris.id
         activity.id = store(activity, person)
         deliver(activity)
-        return HttpResponse() # TODO: code 202
+        return HttpResponse()  # TODO: code 202
 
     raise Exception("Invalid Request")
 
+
 def store(activity, person, remote=False):
-    payload  = bytes(json.dumps(activity.to_json()), "utf-8")
+    payload = bytes(json.dumps(activity.to_json()), "utf-8")
     obj = Activity(payload=payload, person=person, remote=remote)
     if remote:
         obj.ap_id = activity.id
     obj.save()
     return obj.ap_id
+
 
 def deliver(activity):
     audience = activity.get_audience()
@@ -89,6 +97,7 @@ def deliver(activity):
     audience = get_final_audience(audience)
     for ap_id in audience:
         deliver_to(ap_id, activity)
+
 
 def get_final_audience(audience):
     final_audience = []
@@ -99,6 +108,7 @@ def get_final_audience(audience):
         elif isinstance(obj, activities.Actor):
             final_audience.append(obj.id)
     return set(final_audience)
+
 
 def deliver_to(ap_id, activity):
     obj = dereference(ap_id)
@@ -112,6 +122,7 @@ def deliver_to(ap_id, activity):
         msg = msg.format(activity.type, obj.inbox)
         raise Exception(msg)
 
+
 def dereference(ap_id, type=None):
     res = requests.get(ap_id)
     if res.status_code != 200:
@@ -119,11 +130,12 @@ def dereference(ap_id, type=None):
 
     return json.loads(res.text, object_hook=as_activitystream)
 
+
 def get_or_create_remote_person(ap_id):
     try:
         person = Person.objects.get(ap_id=ap_id)
     except Person.DoesNotExist:
-        person   = dereference(ap_id)
+        person = dereference(ap_id)
         hostname = urlparse(person.id).hostname
         username = "{0}@{1}".format(person.preferredUsername, hostname)
         person = Person(
@@ -135,15 +147,16 @@ def get_or_create_remote_person(ap_id):
         person.save()
     return person
 
+
 @csrf_exempt
 def inbox(request, username):
     person = get_object_or_404(Person, username=username)
     if request.method == "GET":
-        objects = person.activities.filter(remote=True).order_by('-created_at')
+        objects = person.activities.filter(remote=True).order_by("-created_at")
         collection = activities.OrderedCollection(objects)
         return JsonResponse(collection.to_json(context=True))
 
-    payload  = request.body.decode("utf-8")
+    payload = request.body.decode("utf-8")
     activity = json.loads(payload, object_hook=as_activitystream)
     activity.validate()
 
@@ -154,6 +167,7 @@ def inbox(request, username):
 
     store(activity, person, remote=True)
     return HttpResponse()
+
 
 def handle_note(activity):
     if isinstance(activity.actor, activities.Actor):
@@ -174,10 +188,11 @@ def handle_note(activity):
         content=activity.object.content,
         person=person,
         ap_id=activity.object.id,
-        remote=True
+        remote=True,
     )
     note.save()
     print(activities.Note(note))
+
 
 def handle_follow(activity):
     followed = get_object_or_404(Person, ap_id=activity.object)
@@ -190,6 +205,7 @@ def handle_follow(activity):
     follower = get_or_create_remote_person(ap_id)
     followed.followers.add(follower)
 
+
 def notes(request, username):
     person = get_object_or_404(Person, username=username)
     collection = activities.OrderedCollection(person.notes.all())
@@ -199,18 +215,21 @@ def notes(request, username):
     # )
     return JsonResponse(collection.to_json(context=True))
 
+
 def followers(request, username):
     person = get_object_or_404(Person, username=username)
     followers = activities.OrderedCollection(person.followers.all())
     return JsonResponse(followers.to_json(context=True))
+
 
 def following(request, username):
     person = get_object_or_404(Person, username=username)
     following = activities.OrderedCollection(person.following.all())
     return JsonResponse(following.to_json(context=True))
 
+
 def activity(request, username, aid):
     activity = get_object_or_404(Activity, pk=aid)
-    payload  = activity.payload.decode("utf-8")
+    payload = activity.payload.decode("utf-8")
     activity = json.loads(payload, object_hook=as_activitystream)
     return JsonResponse(activity.to_json(context=True))

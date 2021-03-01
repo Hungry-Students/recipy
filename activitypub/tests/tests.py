@@ -1,12 +1,13 @@
-from unittest.mock import patch
 import json
+from unittest.mock import patch
 
-from django.test import TestCase, Client
 from django.conf import settings
+from django.test import Client, TestCase
 
 from activitypub.models import Person
 
 settings.ACTIVITYPUB_DOMAIN = "example.com"
+
 
 class PersonTestCase(TestCase):
     def setUp(self):
@@ -32,13 +33,11 @@ class PersonTestCase(TestCase):
         self.assertEqual(self.person.uris.id, self.person.ap_id)
 
         bar = Person(
-            username="bar",
-            name="Bar",
-            ap_id="http://bar.com/@bar",
-            remote=True
+            username="bar", name="Bar", ap_id="http://bar.com/@bar", remote=True
         )
         self.assertEqual(bar.ap_id, "http://bar.com/@bar")
         self.assertEqual(bar.uris.id, bar.ap_id)
+
 
 class NoteTestCase(TestCase):
     def setUp(self):
@@ -46,16 +45,19 @@ class NoteTestCase(TestCase):
         self.note = self.person.notes.create(content="Hello world")
 
     def test_ap_id(self):
-        self.assertEqual(self.note.uris.id, "http://example.com/@foo/notes/{0}".format(self.note.id))
+        self.assertEqual(
+            self.note.uris.id, "http://example.com/@foo/notes/{0}".format(self.note.id)
+        )
         self.assertEqual(self.note.uris.id, self.note.ap_id)
+
 
 class Outbox(TestCase):
     def post(self, path, data):
         payload = json.dumps(data)
-        return self.client.post(path, payload, content_type='application/json')
+        return self.client.post(path, payload, content_type="application/json")
 
     def setUp(self):
-        self.patched = patch('activitypub.views.deliver')
+        self.patched = patch("activitypub.views.deliver")
         self.patched.start()
 
         self.client = Client()
@@ -65,7 +67,7 @@ class Outbox(TestCase):
         self.patched.stop()
 
     def test_post_note(self):
-        response = self.post('/@foo/outbox', {"type": "Note", "content": "Hi!"})
+        response = self.post("/@foo/outbox", {"type": "Note", "content": "Hi!"})
         note = self.person.notes.all()[0]
 
         self.assertEqual(response.status_code, 302)

@@ -4,24 +4,26 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+
 def usernames(apps, schema_editor):
-    Person = apps.get_model('activitypub', 'Person')
+    Person = apps.get_model("activitypub", "Person")
 
     for person in Person.objects.all():
         person.username = person.name
         person.save()
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activitypub', '0001_initial'),
+        ("activitypub", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='username',
+            model_name="person",
+            name="username",
             field=models.CharField(max_length=100, null=True),
         ),
-        migrations.RunPython(usernames, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(usernames, reverse_code=migrations.RunPython.noop),
     ]

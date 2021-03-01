@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activitypub', '0007_activity'),
+        ("activitypub", "0007_activity"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='remote',
+            model_name="activity",
+            name="remote",
             field=models.BooleanField(default=False),
         ),
     ]

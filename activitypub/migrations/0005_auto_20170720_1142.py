@@ -3,7 +3,9 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+
 from activitypub.models import uri
+
 
 def ap_ids(apps, schema_editor):
     Person = apps.get_model("activitypub", "Person")
@@ -22,31 +24,31 @@ def ap_ids(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activitypub', '0004_auto_20170717_1749'),
+        ("activitypub", "0004_auto_20170717_1749"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='person',
-            old_name='actor_id',
-            new_name='ap_id',
+            model_name="person",
+            old_name="actor_id",
+            new_name="ap_id",
         ),
         migrations.AddField(
-            model_name='note',
-            name='ap_id',
-            field=models.TextField(default='default'),
+            model_name="note",
+            name="ap_id",
+            field=models.TextField(default="default"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='note',
-            name='likes',
-            field=models.ManyToManyField(related_name='liked', to='activitypub.Person'),
+            model_name="note",
+            name="likes",
+            field=models.ManyToManyField(related_name="liked", to="activitypub.Person"),
         ),
         migrations.AddField(
-            model_name='note',
-            name='remote',
+            model_name="note",
+            name="remote",
             field=models.BooleanField(default=False),
             preserve_default=False,
         ),
-        migrations.RunPython(ap_ids, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(ap_ids, reverse_code=migrations.RunPython.noop),
     ]

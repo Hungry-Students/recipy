@@ -1,3 +1,2 @@
 from .objects import *
-from .verbs   import *
-
+from .verbs import *

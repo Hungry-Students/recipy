@@ -1,8 +1,8 @@
-from activitypub.activities.objects import ALLOWED_TYPES, Object, Actor
-from activitypub.activities.objects import Person, Note
-from activitypub.activities import errors
-
 from copy import copy
+
+from activitypub.activities import errors
+from activitypub.activities.objects import ALLOWED_TYPES, Actor, Note, Object, Person
+
 
 class Activity(Object):
 
@@ -32,6 +32,7 @@ class Activity(Object):
     def validate(self):
         pass
 
+
 class Create(Activity):
 
     type = "Create"
@@ -50,12 +51,16 @@ class Create(Activity):
         if msg:
             raise errors.ASValidateException(msg)
 
+
 class Follow(Activity):
 
     type = "Follow"
 
-ALLOWED_TYPES.update({
-    "Activity": Activity,
-    "Create": Create,
-    "Follow": Follow,
-})
+
+ALLOWED_TYPES.update(
+    {
+        "Activity": Activity,
+        "Create": Create,
+        "Follow": Follow,
+    }
+)
