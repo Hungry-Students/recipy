@@ -38,4 +38,4 @@ ensure_newline_before_comments = true
 line_length = 88
 default_section = "THIRDPARTY"
 known_first_party = ["cookbook", "recipes", "users"]
-known_third_party = ["django", "recipe_scrapers"]
+known_third_party = ["django", "recipe_scrapers", "requests"]
