@@ -11,9 +11,7 @@ urlpatterns = [
     path("handle_form", views.handle_form, name="handle_form"),
     path("scrape", views.scrape, name="scrape"),
     path("search", views.search, name="search"),
-    path("cookbook", views.my_cookbook, name="my_cookbook"),
+    path("cookbook/", views.my_cookbook, name="my_cookbook"),
     path("cookbook/<str:username>", views.cookbook, name="cookbook"),
-    path(
-        "cookbook/<str:username>/<int:entry_id>/", views.entry, name="cookbook-recipe"
-    ),
+    path("cookbook/<str:username>/<int:entry_id>/", views.entry, name="cookbook-entry"),
 ]

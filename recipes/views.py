@@ -11,11 +11,24 @@ from users.models import User
 from users.utils import is_following
 
 from .forms import CommentForm, InputRecipeForm, SearchRecipeForm
-from .models import Entry, Ingredient, IngredientQuantity, Recipe, RecipeCategory
+from .models import (
+    Cookbook,
+    Entry,
+    Ingredient,
+    IngredientQuantity,
+    Recipe,
+    RecipeCategory,
+)
 from .parser import IngredientParser, YieldsParser
 
 
 def index(request):
+    cookbook_count = Cookbook.objects.count()
+    print(cookbook_count)
+    if cookbook_count == 1:
+        the_one_cookbook = Cookbook.objects.all()[0]
+        the_one_user = the_one_cookbook.owner
+        return redirect("recipes:cookbook", username=the_one_user.username)
     latest_recipes_list = Recipe.objects.order_by("-id")[:5]
     context = {
         "latest_recipes_list": latest_recipes_list,

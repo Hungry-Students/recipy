@@ -27,7 +27,8 @@ with open(".secret-key.txt") as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost"]
+ACTIVITYPUB_DOMAIN = "localhost"
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "annoying",
 ]
 
 MIDDLEWARE = [

@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 
-app_name = "activitypub"
+app_name = "activities"
 urlpatterns = [
     path("<str:username>/entries/<int:entry_id>", views.get_entry, name="entry"),
     path("<str:username>/entries", views.get_entries, name="entries"),

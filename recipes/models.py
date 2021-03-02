@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from annoying.fields import AutoOneToOneField
 from django.db import models
 
 from users.models import URIs, User, uri
@@ -75,7 +76,7 @@ class Comment(models.Model):
 
 
 class Cookbook(models.Model):
-    owner = models.OneToOneField(
+    owner = AutoOneToOneField(
         User,
         on_delete=models.CASCADE,
         primary_key=True,
@@ -101,7 +102,7 @@ class Entry(models.Model):
         if self.remote:
             ap_id = self.ap_id
         else:
-            ap_id = uri("cookbook-recipe", self.cookbook.owner, self.id)
+            ap_id = uri("recipes:cookbook-entry", self.cookbook.owner, self.id)
         return URIs(id=ap_id)
 
     def to_activitystream(self):

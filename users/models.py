@@ -36,11 +36,11 @@ class User(AbstractUser):
         if self.remote:
             return URIs(id=self.ap_id)
         return URIs(
-            id=uri("entry", self.username),
-            following=uri("following", self.username),
-            followers=uri("followers", self.username),
-            outbox=uri("outbox", self.username),
-            inbox=uri("inbox", self.username),
+            id=uri("activities:person", self.username),
+            following=uri("activities:following", self.username),
+            followers=uri("activities:followers", self.username),
+            outbox=uri("activities:outbox", self.username),
+            inbox=uri("activities:inbox", self.username),
         )
 
     def to_activitystream(self):
