@@ -24,7 +24,7 @@ For {{ quantity }} {{ unit }}.<br>
     <body>
         {% for iq in recipe.ingredientquantity_set.all %}
         <tr>
-            <td>{{ iq.quantity }}{% if iq.quantity_unit %}{{ iq.quantity_unit }}{% endif %}</td>
+            <td>{% if iq.quantity %}{{ iq.quantity }}{% endif %}{% if iq.quantity_unit %}{{ iq.quantity_unit }}{% endif %}</td>
             <td>{{ iq.ingredient }}</td>
         </tr>
         {% endfor %}

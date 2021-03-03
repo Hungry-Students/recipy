@@ -10,7 +10,7 @@ from recipe_scrapers import WebsiteNotImplementedError, scrape_me
 from users.models import User
 from users.utils import is_following
 
-from .forms import CommentForm, InputRecipeForm, SearchRecipeForm
+from .forms import CommentForm, InputRecipeForm, SearchRecipeForm, get_ingredient_list
 from .models import (
     Cookbook,
     Entry,
@@ -133,6 +133,33 @@ def handle_form(request):
         return HttpResponseRedirect(reverse("recipes:index"))
     print(form.errors)
     return write(request, error_message_form="Submitted an invalid form")
+    
+def update(request, recipe_id=None):
+	if request.method == "GET":
+		recipe =  get_object_or_404(Recipe, pk=recipe_id)
+		initial = recipe.__dict__
+		initial['ingredients'] = get_ingredient_list(recipe_id)
+		form = InputRecipeForm(initial = initial)
+		context = {
+			"form" : form,
+			"recipe_id" : recipe_id,
+		}
+		return render(request, "recipes/update.html", context)
+		
+	else:
+		recipe_id = request.POST.get("recipe_id", None)
+		recipe =  get_object_or_404(Recipe, pk=recipe_id)
+		initial = recipe.__dict__
+		initial['ingredients'] = get_ingredient_list(recipe_id)
+		form = InputRecipeForm(request.POST, initial = initial)
+		
+		if form.is_valid():
+			if form.has_changed():
+				new_recipe = form.save()
+				#TODO : do some cookbok stuff
+			return HttpResponseRedirect(reverse("recipes:index")) #TODO : return the new recipe detail
+		print(form.errors)
+		return write(request, error_message_form="Submitted an invalid form")
 
 
 # SUBMITTING VIA RECIPE-SCRAPPERS
@@ -145,13 +172,13 @@ def scrape(request):
             scraper = scrape_me(request.POST["url"])
             yields_parser = YieldsParser()
             yields_parser.parse(scraper.yields())
-            print(scraper.total_time())
             new_recipe = Recipe(
                 name=scraper.title(),
-                instruction=scraper.instructions(),
+                instructions=scraper.instructions(),
                 quantity=yields_parser.yields,
                 quantity_unit=yields_parser.yields_unit.lower(),
                 url=request.POST["url"],
+                cook_time = scraper.total_time()
             )
             new_recipe.save()
             ingredient_parser = IngredientParser()
@@ -163,7 +190,7 @@ def scrape(request):
                     new_recipe,
                     ingredient_parser.ingredient_name,
                     ingredient_parser.quantity,
-                    ingredient_parser.quantity_unit,
+                    ingredient_parser.quantity_unit
                 )
         else:
             return write(

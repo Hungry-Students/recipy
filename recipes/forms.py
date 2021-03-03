@@ -40,14 +40,10 @@ class CookTimeWidget(forms.MultiWidget):
         super().__init__(widgets, attrs)
 
     def render(self, name, value, attrs=None, renderer=None):
-        subvalues = self.decompress(value)
-        hours_render = self.widgets[0].render(
-            name + "_hours", subvalues[0], attrs, renderer
-        )
-        minutes_render = self.widgets[1].render(
-            name + "_minutes", subvalues[1], attrs, renderer
-        )
-        return hours_render + minutes_render
+    	value = self.decompress(value)
+    	hours_render = self.widgets[0].render(name + "_hours", value[0], attrs, renderer)
+    	minutes_render = self.widgets[1].render(name + "_minutes", value[1], attrs, renderer)
+    	return hours_render + minutes_render
 
     def decompress(self, value):
         if value:
@@ -102,14 +98,31 @@ class IngredientObject:
         else:
             self.exclude_formatted = ""
         return self
+    
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.name == other.name and self.quantity == other.quantity and self.quantity_unit == other.quantity_unit and self.exclude == other.exclude
+       	return False
+        
+ 
+        
+def get_ingredient_list(recipe_id = None):
+	"""Gives a list of IngredientObject given a recipe id"""
+	recipe = Recipe.objects.get(id=recipe_id)
+	if recipe:
+		answer=[]
+		for ingredientobject in recipe.ingredientquantity_set.all():
+			answer.append(IngredientObject(name=ingredientobject.ingredient, quantity=ingredientobject.quantity, quantity_unit=ingredientobject.quantity_unit))
+		return answer
+	else:
+		return None
 
 
 class IngredientsWidget(forms.Widget):
-    template_name = "recipes/ingredients_widget_template.html"
+    template_name = "recipes/snippets/ingredients_widget_template.html"
 
     def value_from_datadict(self, data, files, name):
         return_list = []
-        print("extracting values")
         for elem in data.keys():
             match = re.search(name + "_(?P<id>[0-9]+)_name", elem)
             if match is not None:
@@ -193,7 +206,7 @@ class InputRecipeForm(Form):
     quantity = forms.IntegerField(min_value=1, label="Yield")
     quantity_unit = forms.CharField(label="Yield unit", initial="Servings")
     category = forms.ModelChoiceField(
-        RecipeCategory.objects.all(), label="Category", required=True
+        RecipeCategory.objects.all(), label="Category", required=False
     )
     cook_time = CookTimeField(required=False)
     diets = forms.ModelMultipleChoiceField(

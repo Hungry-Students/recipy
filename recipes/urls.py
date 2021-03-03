@@ -9,6 +9,7 @@ urlpatterns = [
     path("<int:recipe_id>/", views.recipe_detail, name="recipe_detail"),
     path("write", views.write, name="write"),
     path("handle_form", views.handle_form, name="handle_form"),
+    path("update/<int:recipe_id>/", views.update, name="update"),
     path("scrape", views.scrape, name="scrape"),
     path("search", views.search, name="search"),
     path("cookbook/", views.my_cookbook, name="my_cookbook"),
