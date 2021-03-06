@@ -2,6 +2,7 @@
 from annoying.fields import AutoOneToOneField
 from django.db import models
 
+import activities.activities as acts
 from users.models import URIs, User, uri
 
 
@@ -48,6 +49,24 @@ class Recipe(models.Model):
     def __str__(self):
         return str(self.name)
 
+    def get_yield(self):
+        return "{} {}".format(self.quantity, self.quantity_unit)
+
+    def to_activitystream(self):
+        igdt_list = IngredientQuantity.objects.filter(recipe=self)
+        recipe_as = {
+            # "attributedTo": recipe.author,
+            "name": str(self),
+            "duration": "PT{}M".format(self.cook_time),
+            "cookingMethod": str(self.cooking_method),
+            "recipeCategory": str(self.category),
+            "recipeIngredients": [igdt.to_activitystream for igdt in igdt_list],
+            "content": str(self.instructions),
+            "recipeYield": self.get_yield(),
+            # "tag": [diet.to_activitystream for diet in self.diets.all()],
+        }
+        return acts.extended.Recipe(**recipe_as)
+
 
 class IngredientQuantity(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
@@ -55,6 +74,13 @@ class IngredientQuantity(models.Model):
 
     recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+
+    def get_quantity(self):
+        return "{} {}".format(self.quantity, self.quantity_unit)
+
+    def to_activitystream(self):
+        ingredient_as = {"name": self.ingredient.name, "quantity": self.get_quantity}
+        return acts.extended.Ingredient(**ingredient_as)
 
     def __str__(self):
         return str(self.recipe) + "/" + str(self.ingredient)
@@ -89,8 +115,6 @@ class Cookbook(models.Model):
 
 
 class Entry(models.Model):
-    # Corresponds to the Document object type of Activity Streams
-    # https://www.w3.org/ns/activitystreams#Document
     ap_id = models.TextField(null=True)
     remote = models.BooleanField(default=False)
 
@@ -106,16 +130,9 @@ class Entry(models.Model):
         return URIs(id=ap_id)
 
     def to_activitystream(self):
-        """
-        Dumps the data of self in a JSON activity stream vocabulary compliant format
-        """
-        return {
-            "type": "Document",
-            "id": self.uris.id,
-            "name": str(self.recipe),
-            "actor": self.cookbook.owner.to_activitystream,
-            "url": self.uris.id,
-        }
+        recipe_as = self.recipe.to_activitystream().to_json()
+        recipe_as["attributedTo"] = str(self.cookbook.owner)
+        return acts.extended.Recipe(**recipe_as)
 
     def __str__(self):
         return self.recipe.name
