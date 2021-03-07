@@ -1,30 +1,6 @@
 import json
 from copy import copy
 
-ALLOWED_TYPES = []
-PUBLIC_AUDIENCE = ["to", "cc", "audience"]
-HIDDEN_AUDIENCE = ["bto", "bcc"]
-AUDIENCE = PUBLIC_AUDIENCE + HIDDEN_AUDIENCE
-
-
-def as_activitystream(obj):
-    type = obj.get("type")
-
-    if not type:
-        msg = "Invalid ActivityStream object, the type is missing"
-        raise Exception(msg)
-
-    if type in ALLOWED_TYPES:
-        return ALLOWED_TYPES[type](**obj)
-
-    raise Exception("Invalid Type {}".format(type))
-
-
-def encode_activitystream(obj):
-    if isinstance(obj, Object):
-        return obj.to_json()
-    raise Exception("Unknown ActivityStream Type")
-
 
 class Object:
     attributes = [
@@ -60,8 +36,8 @@ class Object:
     type = "Object"
 
     @classmethod
-    def from_json(cls, json):
-        return Object(**json)
+    def from_json(cls, json_data):
+        return Object(**json_data)
 
     def __init__(self, obj=None, **kwargs):
         if obj:
@@ -86,7 +62,7 @@ class Object:
         values = {}
         for attribute in self.attributes:
             value = getattr(self, attribute, None)
-            if value is None:
+            if value is None or value == "None":
                 continue
             if isinstance(value, Object):
                 value = value.to_json()
@@ -234,3 +210,35 @@ class OrderedCollection(Collection):
     @orderedItems.setter
     def orderedItems(self, iterable):
         self.items = iterable
+
+
+ALLOWED_TYPES = {
+    "Object": Object,
+    "Activity": Activity,
+    "Collection": Collection,
+    "OrderedCollection": OrderedCollection,
+}
+PUBLIC_AUDIENCE = ["to", "cc", "audience"]
+HIDDEN_AUDIENCE = ["bto", "bcc"]
+AUDIENCE = PUBLIC_AUDIENCE + HIDDEN_AUDIENCE
+
+
+def as_activitystream(obj):
+    type = obj.get("type")
+
+    if not type:
+        msg = "Invalid ActivityStream object, the type is missing"
+        raise Exception(msg)
+
+    if type in ALLOWED_TYPES:
+        return ALLOWED_TYPES[type](**obj)
+    print(ALLOWED_TYPES)
+
+    raise Exception("Invalid Type {}".format(type))
+
+
+def encode_activitystream(obj):
+    if isinstance(obj, Object):
+        return obj.to_json()
+    print(obj)
+    raise Exception("Unknown ActivityStream Type")

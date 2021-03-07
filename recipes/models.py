@@ -29,6 +29,9 @@ class RestrictedDiet(models.Model):
 
 
 class Recipe(models.Model):
+    ap_id = models.TextField(null=True)
+    remote = models.BooleanField(default=False)
+
     name = models.CharField(max_length=200)
     ingredients = models.ManyToManyField(Ingredient, through="IngredientQuantity")
 
@@ -75,7 +78,9 @@ class Recipe(models.Model):
             "duration": "PT{}M".format(self.cook_time),
             "cookingMethod": str(self.cooking_method),
             "recipeCategory": str(self.category),
-            "recipeIngredients": [igdt.to_activitystream for igdt in igdt_list],
+            "recipeIngredients": [
+                igdt.to_activitystream().to_json() for igdt in igdt_list
+            ],
             "content": str(self.instructions),
             "recipeYield": self.get_yield(),
             # "tag": [diet.to_activitystream for diet in self.diets.all()],
@@ -94,7 +99,7 @@ class IngredientQuantity(models.Model):
         return "{} {}".format(self.quantity, self.quantity_unit)
 
     def to_activitystream(self):
-        ingredient_as = {"name": self.ingredient.name, "quantity": self.get_quantity}
+        ingredient_as = {"name": self.ingredient.name, "quantity": self.get_quantity()}
         return acts.extended.Ingredient(**ingredient_as)
 
     def __str__(self):
@@ -146,8 +151,7 @@ class Entry(models.Model):
 
     def to_activitystream(self):
         recipe_as = self.recipe.to_activitystream().to_json()
-        recipe_as["attributedTo"] = str(self.cookbook.owner)
-        return acts.extended.Recipe(**recipe_as)
+        return acts.Entry(attributed_to=self.cookbook.owner.ap_id, parent=recipe_as)
 
     def __str__(self):
         return self.recipe.name

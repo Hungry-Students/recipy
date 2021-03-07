@@ -1,4 +1,4 @@
-from .core import Activity, Object
+from .core import ALLOWED_TYPES, Activity, Object
 
 
 class Add(Activity):
@@ -11,7 +11,7 @@ class Add(Activity):
     """
 
     type = "Add"
-    required_attr = Activity.required_attrs + ["actor", "object", "target"]
+    required_attr = Activity.required_attrs + ["actor", "object"]
 
 
 class Create(Activity):
@@ -21,7 +21,7 @@ class Create(Activity):
     """
 
     type = "Create"
-    required_attr = Activity.required_attrs + ["actor", "object", "target"]
+    required_attr = Activity.required_attrs + ["actor", "object"]
 
 
 class Follow(Activity):
@@ -68,6 +68,15 @@ class Recipe(Object):
     ]
 
 
+class Entry(Object):
+    """
+    Represents an entry in a cookbook
+    """
+
+    type = "Entry"
+    attributes = Object.attributes + ["parent"]
+
+
 class Ingredient(Object):
     """
     Represents an ingredient
@@ -87,3 +96,17 @@ class Tombstone(Object):
 
     type = "Tombstone"
     attributes = Object.attributes + ["formerType", "deleted"]
+
+
+ALLOWED_TYPES.update(
+    {
+        "Add": Add,
+        "Create": Create,
+        "Follow": Follow,
+        "Person": Person,
+        "Recipe": Recipe,
+        "Entry": Entry,
+        "Ingredient": Ingredient,
+        "Tombstone": Tombstone,
+    }
+)
