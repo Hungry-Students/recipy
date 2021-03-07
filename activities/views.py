@@ -37,20 +37,40 @@ def outbox(request, username):
     payload = request.body.decode("utf-8")
     activity = json.loads(payload, object_hook=acts.as_activitystream)
 
-    if activity.type == "Follow":
-        if activity.object.type != "Person":
-            raise Exception("Sorry, you can only follow Persons objects")
+    if activity.type == "Entry":
+        obj = activity
+        activity = acts.Create(to=user.uris.followers, actor=user.uris.id, object=obj)
 
-        followed = get_or_create_remote_person(activity.object)
-        user.following.add(followed)
+    activity.validate()
 
-        activity.actor = user.uris.id
-        activity.to = followed.uris.id
+    if activity.type == "Create":
+        if activity.object.type != "Entry":
+            raise Exception("Sorry, you can only create Entry objects")
+
+        # activity.object.id = note.uris.id
         activity.id = store(activity, user)
         deliver(activity)
         return HttpResponse(status=202)
 
+    if activity.type == "Follow":
+        return outbox_follow(activity, user)
+
     raise Exception("Invalid Request")
+
+
+def outbox_follow(activity, user):
+    print(activity)
+    if activity.object.type != "Person":
+        raise Exception("Sorry, you can only follow Persons objects")
+
+    followed = get_or_create_remote_person(activity.object)
+    # user.following.add(followed)
+
+    activity.actor = user.uris.id
+    activity.to = followed.uris.id
+    activity.id = store(activity, user)
+    deliver(activity)
+    return HttpResponse(status=202)
 
 
 def store(activity, person, remote=False):
@@ -78,7 +98,7 @@ def deliver(activity):
 
 def get_final_audience(audience):
     """
-    Return a list of the `ap_id`s contained in `æudience`
+    Return a list of the `ap_id`s contained in `audience`
     """
     final_audience = []
     for ap_id in audience:
