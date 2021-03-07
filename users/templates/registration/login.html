@@ -11,6 +11,6 @@
     <input type="submit" value={% trans "Login" %}>
 </form>
 
-<a href="{% url 'users:dashboard' %}">{% trans "Back to dashboard" %}</a>
+<a href="{% url 'recipes:index' %}">{% trans "Back to index" %}</a>
 <a href="{% url 'users:password_reset' %}">{% trans "Reset password" %}</a>
 {% endblock %}

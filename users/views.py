@@ -8,10 +8,6 @@ from .models import User
 from .utils import is_following
 
 
-def dashboard(request):
-    return render(request, "users/dashboard.html")
-
-
 @login_required
 def follow_toggle(request):
     user_to_toggle = get_object_or_404(
@@ -27,4 +23,4 @@ def follow_toggle(request):
         resolve(url)
         return HttpResponseRedirect(url)
     except Resolver404:
-        return redirect("users:dashboard")
+        return redirect("recipes:index")
