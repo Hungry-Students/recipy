@@ -12,7 +12,7 @@
 <h2>{{ category}}</h2>
 <ul>
     {% for recipe in recipes %}
-    <li><a href="{% url 'recipes:cookbook-entry' username=user.username entry_id=recipe.id %}">
+    <li><a href="{% url 'recipes:cookbook-entry' username=user.username recipe_id=recipe.id %}">
         {{ recipe.name }}
     </a></li>
     {% endfor %}

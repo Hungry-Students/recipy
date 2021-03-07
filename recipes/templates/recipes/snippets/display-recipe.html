@@ -6,7 +6,7 @@
 For {{ quantity }} {{ unit }}.<br>
 {% endblocktrans %}
 
-{% trans "Cooking time:" %} {{ recipe.cook_time }}.<br><br>
+{% trans "Cooking time:" %} {{ recipe.cook_time_hours }} hours {{recipe.cook_time_minutes}} minutes.<br><br>
 
 {% if recipe.diet %}
 {{ recipe.diet }}
@@ -24,7 +24,7 @@ For {{ quantity }} {{ unit }}.<br>
     <body>
         {% for iq in recipe.ingredientquantity_set.all %}
         <tr>
-            <td>{% if iq.quantity %}{{ iq.quantity }}{% endif %}{% if iq.quantity_unit %}{{ iq.quantity_unit }}{% endif %}</td>
+            <td>{% if iq.quantity %}{{ iq.quantity }} {% endif %}{% if iq.quantity_unit %}{{ iq.quantity_unit }}{% endif %}</td>
             <td>{{ iq.ingredient }}</td>
         </tr>
         {% endfor %}
@@ -34,6 +34,8 @@ For {{ quantity }} {{ unit }}.<br>
 <h3>{% trans "Recipe" %}</h3>
 
 {{ recipe.instructions|linebreaks }}
+
+<div id="update"><form action="{% url 'recipes:update' recipe.id %}"> <input type="submit" value="Add recipe to my cookbook and update it"></form></div>
 
 <div id="comments">
     <h3>{% trans "Comments" %}</h3>

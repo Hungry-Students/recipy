@@ -42,7 +42,7 @@
 
 		</div>
 		{% endif %}
-		<form method="post" action="{% url 'recipes:handle_form' %}">
+		<form method="post" action="{% url 'recipes:update' %}">
 		    {% csrf_token %}
 		    <table>
 		        {{ form.as_table }}

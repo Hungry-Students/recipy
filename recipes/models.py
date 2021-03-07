@@ -45,6 +45,21 @@ class Recipe(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
     quantity_unit = models.CharField(max_length=200, blank=True, null=True)
     diets = models.ManyToManyField(RestrictedDiet)
+    
+    #number of cookbooks referencing this recipe. Used to know when to remove an unused recipe
+    number_references = models.IntegerField(default=1)
+    
+    @property
+    def cook_time_minutes(self):
+    	if self.cook_time:
+    		return self.cook_time%60
+    	return 0
+    	
+    @property
+    def cook_time_hours(self):
+    	if self.cook_time:
+    		return self.cook_time//60
+    	return 0
 
     def __str__(self):
         return str(self.name)
@@ -72,7 +87,7 @@ class IngredientQuantity(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
     quantity_unit = models.CharField(max_length=200, blank=True, null=True)
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
 
     def get_quantity(self):

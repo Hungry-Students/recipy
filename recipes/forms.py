@@ -14,7 +14,7 @@ from .models import (
     RecipeCategory,
     RestrictedDiet,
 )
-from .parser import IngredientParser  # , YieldsParser
+from .parser import IngredientParser  , YieldsParser
 
 
 class CustomNumberInput(forms.NumberInput):
@@ -98,11 +98,6 @@ class IngredientObject:
         else:
             self.exclude_formatted = ""
         return self
-    
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.name == other.name and self.quantity == other.quantity and self.quantity_unit == other.quantity_unit and self.exclude == other.exclude
-       	return False
         
  
         
@@ -248,9 +243,31 @@ class InputRecipeForm(Form):
                 )
 
         return recipe
+        
+def form_from_scrape(scraper):
+    yields_parser = YieldsParser()
+    yields_parser.parse(scraper.yields())
+    ingredient_parser = IngredientParser()
+    l_ingredients=[]
+    for e in scraper.ingredients():
+        ingredient_parser.parse(e.lower())
+        # NOTE: we force lower case in the argument, upper case will be
+        # given in the parser when needed (e.g. cL)
+        l_ingredients.append(IngredientObject(name=ingredient_parser.ingredient_name, quantity = ingredient_parser.quantity, quantity_unit = ingredient_parser.quantity_unit))
+        
+    initial = {
+     	'name' : scraper.title(), 
+     	'instructions' : scraper.instructions(),
+     	'quantity' : yields_parser.yields,
+     	'quantity_unit' : yields_parser.yields_unit,
+     	'cook_time' : scraper.total_time(),
+     	'ingredients' : l_ingredients
+     }
+     
+    return InputRecipeForm(initial=initial)
 
-
-class SearchRecipeForm(Form):
+class SearchRecipeForm(Form):	
+    only_cookbook = forms.BooleanField(required=False, label="Search only on my cookbook", initial=True)
     name = forms.CharField(label="Name", required=False)
     category = forms.ModelChoiceField(
         RecipeCategory.objects.all(), label="Category", required=False
@@ -267,24 +284,28 @@ class SearchRecipeForm(Form):
         display_type=1,
         validators=[validate_no_duplicate],
     )
-
-    def search(self):
-        # filtering name
-        query = Recipe.objects.filter(name__icontains=self.cleaned_data["name"])
-        # filtering category
-        if self.cleaned_data["category"]:
-            query = query.filter(category__name=self.cleaned_data["category"])
-        # filtering diet
-        for diet in self.cleaned_data["diets"]:
-            query = query.filter(diets__name=diet)
-        # filtering ingredients
-        for ingredient in self.cleaned_data["ingredients"]:
-            if ingredient.name:  # we don't filter for empty inputs
-                if ingredient.exclude:
-                    query = query.exclude(ingredients__name=ingredient.name)
-                else:
-                    query = query.filter(ingredients__name=ingredient.name)
-        return query
+    
+    def search(self, user=None):
+    	if self.cleaned_data['only_cookbook'] and user:
+    		query = user.cookbook.recipes.all()
+    	else:
+    		query = Recipe.objects.all()
+    	# filtering name
+    	query = query.filter(name__icontains=self.cleaned_data["name"])
+    	# filtering category
+    	if self.cleaned_data["category"]:
+    		query = query.filter(category__name=self.cleaned_data["category"])
+    	# filtering diet
+    	for diet in self.cleaned_data["diets"]:
+    		query = query.filter(diets__name=diet)
+    	# filtering ingredients
+    	for ingredient in self.cleaned_data["ingredients"]:
+    		if ingredient.name:  # we don't filter for empty inputs
+    			if ingredient.exclude:
+    				query = query.exclude(ingredients__name=ingredient.name)
+    			else:
+    				query = query.filter(ingredients__name=ingredient.name)
+    	return query
 
 
 class CommentForm(forms.ModelForm):

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Scraper results" %}{% endblock %}
+
+{% block content %}
+
+{% load static %}
+<script src="{% static 'recipes/ingredient_form_script.js' %}"></script>
+<div>
+	<h3>{%trans "Check and update the scrapper result and submit to add the recipe to your cookbook" %}</h3>
+</div>
+<div>
+	<form method="post" action="{% url 'recipes:update'%}">
+	    {% csrf_token %}
+	    <table>
+	        {{ form.as_table }}
+
+		     
+			</table><br>
+	    <input type="submit" value={% trans "Submit" %}>
+	</form>
+	<input type="button" value="Cancel" onclick="history.back()">
+</div>
+
+{% endblock %}

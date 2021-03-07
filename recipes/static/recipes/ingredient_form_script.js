@@ -13,7 +13,7 @@ function addIngredient(name, display_type, value_name='', value_quantity='', val
 	if (display_type == 0){
 		content = 	`<td>Quantity</td>
 					<td>
-						<input id="${name}_${ingredient_counter}_quantity" name="${name}_${ingredient_counter}_quantity" value="${value_quantity}" placeholder="42 spoons">
+						<input id="${name}_${ingredient_counter}_quantity" name="${name}_${ingredient_counter}_quantity" value="${value_quantity}">
 					</td>
 					`
 	}
@@ -29,7 +29,7 @@ function addIngredient(name, display_type, value_name='', value_quantity='', val
 	<td>
 		<input list="${name}_ingredients_list" id="${name}_${ingredient_counter}_name" name="${name}_${ingredient_counter}_name" value="${value_name}">
 	</td>` + content + `<td>
-		<button type="button" onclick=removeIngredient(${ingredient_counter},${name})>Remove ingredient</button><br>
+		<button type="button" onclick=removeIngredient(${ingredient_counter},'${name}')>Remove ingredient</button><br>
 	</td>`;
 	tr_node.id = `${name}_${ingredient_counter}_input`;
 	document.getElementById(`${name}_ingredient_input`).appendChild(tr_node);

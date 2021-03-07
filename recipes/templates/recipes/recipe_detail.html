@@ -8,6 +8,4 @@
 
 {% include "recipes/snippets/display-recipe.html" with recipe=recipe comments=comments new_comment=new_comment comment_form=comment_form %}
 
-<a href="{% url 'recipes:update' recipe.id %}">Update this recipe</a>
-
 {% endblock %}
