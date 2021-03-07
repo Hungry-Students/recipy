@@ -66,7 +66,7 @@ def cookbook(request, username):
     """
     user = get_object_or_404(User, username=username)
     recipes = user.cookbook.recipes.all()
-    categories = {"Miscellaneous": recipes.filter(category=None)}
+    categories = {"My recipes": recipes.filter(category=None)}
     for category in RecipeCategory.objects.all():
         categories[category.name] = recipes.filter(category=category)
     is_following_ = is_following(request.user, user)

@@ -16,7 +16,7 @@
     <body>
         <header>
             {% block header %}
-            <h1><a href="{% url 'users:dashboard' %}">
+            <h1><a href="{% url 'recipes:index' %}">
                 <pre>______              __ ______         
 |   __ \.-----.----.|__|   __ \.--.--.
 |      <|  -__|  __||  |    __/|  |  |
@@ -35,9 +35,9 @@
         <div id="footer">
             {% block footer %}
             {% if user.is_authenticated %}
-           	Connected as {{user.username}} <a href="{% url 'users:logout' %}">{% trans "(Log out)" %}</a>
+           	Connected as {{user.username}}: <a href="{% url 'users:logout' %}">{% trans "Log out" %}</a> <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
             {% else %}
-            Not connected <a href="{% url 'users:login' %}">{% trans "(Log in)" %}</a>
+            Not connected: <a href="{% url 'users:login' %}">{% trans "Log in" %}</a>
             {% endif %}
             <br>
             <a href="{% url 'recipes:my_cookbook'%}">{% trans "My cookbook" %}</a>
