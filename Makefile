@@ -20,7 +20,7 @@ install: install-all-but-dev ## Install requirements
 	pip install -r requirements-dev.txt
 
 .PHONY: migrate
-migrate: ## Make and run migrations
+migrate: .secret-key.txt ## Make and run migrations
 	$(PYTHON) $(MANAGER) makemigrations
 	$(PYTHON) $(MANAGER) migrate
 
@@ -44,3 +44,8 @@ test: ## Tests all the apps
 .PHONY: superuser
 superuser: ## Create super user
 	$(PYTHON) $(MANAGER) createsuperuser
+
+
+.secret-key.txt:
+	python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())' > .secret-key.txt
+
