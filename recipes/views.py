@@ -164,7 +164,7 @@ def update(request, recipe_id=None):
 def scrape(request):
     try:
         scraper = scrape_me(request.POST["url"])
-        form = form_from_scrape(scraper)
+        form = form_from_scrape(scraper, request.POST["url"])
         context = {'form':form}
         return render(request, "recipes/scrape.html", context)
     except WebsiteNotImplementedError:

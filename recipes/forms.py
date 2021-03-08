@@ -219,6 +219,7 @@ class InputRecipeForm(Form):
         display_type=0,
         validators=[validate_no_duplicate, validate_non_empty_name],
     )
+    url = forms.CharField(widget = forms.HiddenInput)
 
     def save(self):
         """builds a new recipe and saves it to DB. TODO : manage cookbook links, if recipe is modified manage possible deletion of former recipe"""
@@ -228,6 +229,7 @@ class InputRecipeForm(Form):
         recipe.quantity = self.cleaned_data["quantity"]
         recipe.quantity_unit = self.cleaned_data["quantity_unit"]
         recipe.cook_time = self.cleaned_data["cook_time"]
+        recipe.category = self.cleaned_data["category"]
         recipe.save()
 
         for diet in self.cleaned_data["diets"]:
@@ -244,7 +246,7 @@ class InputRecipeForm(Form):
 
         return recipe
         
-def form_from_scrape(scraper):
+def form_from_scrape(scraper, url):
     yields_parser = YieldsParser()
     yields_parser.parse(scraper.yields())
     ingredient_parser = IngredientParser()
@@ -261,7 +263,8 @@ def form_from_scrape(scraper):
      	'quantity' : yields_parser.yields,
      	'quantity_unit' : yields_parser.yields_unit,
      	'cook_time' : scraper.total_time(),
-     	'ingredients' : l_ingredients
+     	'ingredients' : l_ingredients,
+     	'url' : url,
      }
      
     return InputRecipeForm(initial=initial)

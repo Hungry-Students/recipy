@@ -29,7 +29,7 @@ class RestrictedDiet(models.Model):
 
 
 class Recipe(models.Model):
-    ap_id = models.TextField(null=True)
+    ap_id = models.TextField(null=True, default=None, blank=True)
     remote = models.BooleanField(default=False)
 
     name = models.CharField(max_length=200)
@@ -47,7 +47,7 @@ class Recipe(models.Model):
     instructions = models.CharField(max_length=10000)
     quantity = models.IntegerField(blank=True, null=True)
     quantity_unit = models.CharField(max_length=200, blank=True, null=True)
-    diets = models.ManyToManyField(RestrictedDiet)
+    diets = models.ManyToManyField(RestrictedDiet, null=True, blank=True)
     
     #number of cookbooks referencing this recipe. Used to know when to remove an unused recipe
     number_references = models.IntegerField(default=1)

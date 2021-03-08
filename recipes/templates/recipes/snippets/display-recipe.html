@@ -8,9 +8,20 @@ For {{ quantity }} {{ unit }}.<br>
 
 {% trans "Cooking time:" %} {{ recipe.cook_time_hours }} hours {{recipe.cook_time_minutes}} minutes.<br><br>
 
-{% if recipe.diet %}
-{{ recipe.diet }}
+{% if recipe.category %}
+{% trans "Category:" %} {{recipe.category}}.<br>
 {% endif %}
+
+{% if recipe.diets %}
+{% trans "Diet compatibility:" %} {% for diet in recipe.diets.all %}{{diet}}   {% endfor %}.
+<br>
+{% endif %}
+
+{% if recipe.url %}
+<br>
+{% trans "Source:" %} <a href="{{recipe.url}}">{{recipe.url}}</a><br>
+{% endif %}
+<br>
 
 <h3>{% trans "Ingredients" %}</h3>
 
