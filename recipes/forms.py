@@ -219,7 +219,7 @@ class InputRecipeForm(Form):
         display_type=0,
         validators=[validate_no_duplicate, validate_non_empty_name],
     )
-    url = forms.CharField(widget = forms.HiddenInput)
+    url = forms.CharField(widget = forms.HiddenInput, required=False)
 
     def save(self):
         """builds a new recipe and saves it to DB. TODO : manage cookbook links, if recipe is modified manage possible deletion of former recipe"""
